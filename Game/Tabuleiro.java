@@ -92,7 +92,7 @@ public class Tabuleiro {
         return false;
     }
 
-    private List<Posicao> calcularMovimentosValidos(Peca peca, Tabuleiro tabuleiro) {
+    public List<Posicao> calcularMovimentosValidos(Peca peca, Tabuleiro tabuleiro) {
         List<Posicao> movimentosValidos = new ArrayList<>();
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {

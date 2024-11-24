@@ -5,6 +5,7 @@ import Game.Cor;
 public class Rainha extends Peca {
     public Rainha(Cor cor, Posicao posicao) {
         super(cor, posicao);
+        this.spritePath = cor==Cor.BRANCO ? "/sprites/W_QUEEN.png": "/sprites/B_QUEEN.png";
     }
     @Override
     public boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro) {

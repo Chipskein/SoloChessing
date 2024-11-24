@@ -6,6 +6,7 @@ import Game.Cor;
 public abstract class Peca implements Cloneable{
     protected Cor cor;
     protected Posicao posicao;
+    protected String spritePath;
     protected boolean capturada = false;
     public Peca(Cor cor, Posicao posicao) {
         this.cor = cor;
@@ -69,6 +70,10 @@ public abstract class Peca implements Cloneable{
         return true;
     }
     public boolean verificarTrajetoriaRetilinea(Posicao destino, Tabuleiro tabuleiro){
+        // Verifica se o movimento é na diagonal
+        if (Math.abs(destino.getLinha() - this.posicao.getLinha()) == Math.abs(destino.getColuna() - this.posicao.getColuna())) {
+            return false;
+        }
         int passoX = 0, passoY = 0;
         if (destino.getLinha() > this.posicao.getLinha()) passoX = 1;
         else if (destino.getLinha() < this.posicao.getLinha()) passoX = -1;
@@ -116,4 +121,7 @@ public abstract class Peca implements Cloneable{
         return posicao;
     }
 
+    public String getSpritePath(){
+        return spritePath;
+    }
 }

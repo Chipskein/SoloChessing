@@ -5,6 +5,7 @@ import Game.Cor;
 public  class Peao extends Peca {
     public Peao(Cor cor, Posicao posicao) {
         super(cor, posicao);
+        this.spritePath = cor==Cor.BRANCO ? "/sprites/W_PAWN.png": "/sprites/B_PAWN.png";
     }
     @Override
     /**

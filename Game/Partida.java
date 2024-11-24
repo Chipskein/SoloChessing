@@ -18,11 +18,6 @@ public class Partida {
         if (!gameLoop) {
             return ;
         }
-        //game loop
-        //draw board
-        //mouse event drag pieces
-        //check if game end
-        //if is not ended change turn
     }
     public void mudarTurno() throws CloneNotSupportedException{
         jogadorAtual.incrementarMovimentos();
@@ -47,6 +42,16 @@ public class Partida {
     }
     public Jogador getJogadorAtual(){
         return jogadorAtual;
+    }
+
+    public Jogador getVencedor(){
+        if(jogador1.isVencedor()){
+            return jogador1;
+        }else if(jogador2.isVencedor()){
+            return jogador2;
+        }else{
+            return null;
+        }
     }
 
     public Tabuleiro getTabuleiro(){
