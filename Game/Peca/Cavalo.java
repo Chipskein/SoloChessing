@@ -5,7 +5,7 @@ import Game.Cor;
 public class Cavalo extends Peca {
     public Cavalo(Cor cor, Posicao posicao) {
         super(cor, posicao);
-        this.spritePath = cor==Cor.BRANCO ? "/sprites/W_HORSE.png": "/sprites/B_HORSE.png";
+        this.spritePath = cor==Cor.BRANCO ? "/Resources/sprites/W_HORSE.png": "/Resources/sprites/B_HORSE.png";
     }
     @Override
     public boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro) {

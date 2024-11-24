@@ -8,7 +8,13 @@ import Game.Peca.Peca;
 import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
-
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import javax.sound.sampled.LineEvent.Type;
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
@@ -67,6 +73,7 @@ public class Main extends JPanel {
         });
     }
 
+ 
     private void loadPieceImages() {
         pieceImages = new Image[BOARD_SIZE][BOARD_SIZE];
         for (Peca[] pecas : this.tabuleiro.getTabuleiro()) {

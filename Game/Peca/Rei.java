@@ -5,7 +5,7 @@ import Game.Cor;
 public class Rei extends Peca {
     public Rei(Cor cor, Posicao posicao) {
         super(cor, posicao);
-        this.spritePath = cor==Cor.BRANCO ? "/sprites/W_KING.png": "/sprites/B_KING.png";
+        this.spritePath = cor==Cor.BRANCO ? "/Resources/sprites/W_KING.png": "/Resources/sprites/B_KING.png";
     }
     @Override
     public boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro) {
