@@ -56,7 +56,7 @@ Atenção! Não é necessário implementar um jogo completo (interface/terminal 
   }
 
   abstract class Peca {
-      protected String cor;
+      protected Cor cor;
       protected Posicao posicao;
 
       public abstract boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro);
