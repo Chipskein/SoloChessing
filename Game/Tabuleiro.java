@@ -23,6 +23,7 @@ public class Tabuleiro {
      * as últimas duas linhas(6-7) são as peças brancas
      */
     private Peca[][] tabuleiro;
+
     public Posicao getReiPretoPosicao() {
         return reiPretoPosicao;
     }
@@ -119,14 +120,14 @@ public class Tabuleiro {
         }
         
         // Simule todos os movimentos possíveis para verificar se é possível sair do xeque
-        
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 Peca peca = tabuleiro[i][j];
                 if (peca != null && peca.getCor() == corJogadorAtual) {
-                    List<Posicao> movimentos = calcularMovimentosValidos(peca, this);
+                    Tabuleiro tabuleiroClone = clonarTabuleiro(tabuleiro);
+                    List<Posicao> movimentos = calcularMovimentosValidos(peca, tabuleiroClone);
                     for (Posicao movimento : movimentos) {
-                        Tabuleiro tabuleiroClone = clonarTabuleiro(tabuleiro);
+                        tabuleiroClone = clonarTabuleiro(tabuleiro);
                         var previusPosicao = peca.getPosicao();
                         peca.movimentar(movimento,tabuleiroClone);
                         if (!tabuleiroClone.verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {

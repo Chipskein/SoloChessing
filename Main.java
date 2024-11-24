@@ -1,6 +1,12 @@
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 
 import Game.Tabuleiro;
@@ -9,7 +15,7 @@ import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
 public class Main extends JPanel {
-    private static final int TILE_SIZE = 100;
+    private static final int TILE_SIZE = 120;
     private static final int BOARD_SIZE = 8;
     private Partida partida;
     private Tabuleiro tabuleiro;
@@ -18,19 +24,22 @@ public class Main extends JPanel {
     private Point selectedTile = null;
     private Point selectedPieceTile = null;
     private Point selectedMovePieceTile = null;
-
+    private JLabel currentPlayerLabel;
+    private Clip boardSound;
     
-    public Main(Partida partida,Tabuleiro tabuleiro) {
+    public Main(Partida partida, JLabel currentPlayerLabel) {
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
-        this.tabuleiro = tabuleiro;
+        this.tabuleiro = partida.getTabuleiro();
         this.partida = partida;
+        this.currentPlayerLabel = currentPlayerLabel;
+        updateCurrentPlayerLabel();
         loadPieceImages();
+        loadAudio();
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = e.getX() / TILE_SIZE;
                 int row = e.getY() / TILE_SIZE;
-
                 if (col >= 0 && col < BOARD_SIZE && row >= 0 && row < BOARD_SIZE) {
                     selectedTile = new Point(col, row);
                     Peca piece = tabuleiro.getTabuleiro()[row][col];
@@ -39,6 +48,17 @@ public class Main extends JPanel {
                         selectedPieceTile = new Point(col, row);
                         selectedTile=null;
                     }  else if (selectedPieceTile != null) {
+                        // DOES NOT WORK
+                        if (boardSound != null && boardSound.isOpen()) {
+                            if (boardSound.isRunning()) {
+                                boardSound.stop();
+                            }
+                            System.out.println(boardSound);
+                            System.out.println("Playing sound");
+                            boardSound.setFramePosition(0);
+                            boardSound.start();
+                        }
+
                         selectedMovePieceTile = new Point(col, row);
                         System.out.println("Selected move at (" + row + ", " + col + ")");
                         var peca=tabuleiro.getPeca(new Posicao(selectedPieceTile.y, selectedPieceTile.x));
@@ -53,21 +73,47 @@ public class Main extends JPanel {
                                 System.out.println("Erro ao mudar turno");
                             }
                             currentPlayer=partida.getJogadorAtual().getCor();
+                            updateCurrentPlayerLabel();
                             if (partida.isFimDeJogo()) {
                                 JOptionPane.showMessageDialog(Main.this, 
                                 "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", 
                                 "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
                                 System.exit(0);
                             }
+                            //update
+                            tabuleiro=partida.getTabuleiro();
                         }
+                    } else{
+                        selectedTile = null;
+                        selectedPieceTile = null;
+                        selectedMovePieceTile = null;
                     }
-                    repaint();
+                    
                 }
+                repaint();
             }
         });
     }
 
+    private void updateCurrentPlayerLabel() {
+        currentPlayerLabel.setText("Current Player: " + (currentPlayer == Cor.BRANCO ? "White" : "Black"));
+    }
  
+    private void loadAudio(){
+        try{
+            //Does not work
+            InputStream audioSrc = getClass().getResourceAsStream("/Resources/audios/teste.wav");
+            InputStream bufferedIn = new BufferedInputStream(audioSrc);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
+            boardSound = AudioSystem.getClip();
+            boardSound.open(audioStream);
+            System.out.println("Audio loaded");
+            boardSound.setFramePosition(0);
+        } catch (Exception e) {
+            System.out.println("Error loading audio: " + e.getMessage());
+        }
+
+    }
     private void loadPieceImages() {
         pieceImages = new Image[BOARD_SIZE][BOARD_SIZE];
         for (Peca[] pecas : this.tabuleiro.getTabuleiro()) {
@@ -104,9 +150,12 @@ public class Main extends JPanel {
                     g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     var pos=tabuleiro.calcularMovimentosValidos(tabuleiro.getPeca(new Posicao(row, col)), tabuleiro);
                     for (Posicao movimento : pos) {
+                        if(currentPlayer==Cor.PRETO){
+                            System.out.println("Movimento: "+movimento.getLinha() + " "+ movimento.getColuna());
+                        }
                         g.setColor(new Color(8, 200, 0 ,128));
                         g.fillRect(movimento.getColuna() * TILE_SIZE, movimento.getLinha() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                        System.out.println("Highlighting tile: (" + row + ", " + col + ")");
+                        System.out.println("Highlighting tile: (" + movimento.getLinha() + ", " + movimento.getColuna() + ")");
                     }
                 }
 
@@ -123,8 +172,16 @@ public class Main extends JPanel {
         partida.iniciarJogo(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        Main boardPanel = new Main(partida,partida.getTabuleiro());
+        JLabel currentPlayerLabel = new JLabel("Current Player: White");
+        currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        currentPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BorderLayout());
+        sidebar.setPreferredSize(new Dimension(200, BOARD_SIZE * TILE_SIZE));
+        sidebar.add(currentPlayerLabel, BorderLayout.NORTH);
+        Main boardPanel = new Main(partida,currentPlayerLabel);
         frame.add(boardPanel, BorderLayout.CENTER);
+        frame.add(sidebar, BorderLayout.EAST);
         frame.pack();
         frame.setVisible(true);
         frame.addKeyListener(new KeyAdapter() {
