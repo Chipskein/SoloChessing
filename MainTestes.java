@@ -168,8 +168,8 @@ public class MainTestes {
         if(!teste){
             throw new Exception("Teste Fail");
         }
-        System.out.println("Movendo Rei[7][3] linha para [6][4] "+teste);
-        partida.getTabuleiro().getTabuleiro()[7][3].movimentar(new Posicao(6,4), partida.getTabuleiro());
+        System.out.println("Movendo Rei[7][4] linha para [6][4] "+teste);
+        partida.getTabuleiro().getTabuleiro()[7][4].movimentar(new Posicao(6,4), partida.getTabuleiro());
         System.out.println(partida.getTabuleiro());
         partida.mudarTurno();
 
