@@ -19,6 +19,7 @@ public class Main extends JPanel {
     private Point selectedPieceTile = null;
     private Point selectedMovePieceTile = null;
 
+    
     public Main(Partida partida,Tabuleiro tabuleiro) {
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
         this.tabuleiro = tabuleiro;
