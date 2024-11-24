@@ -174,7 +174,7 @@ public class MainTestes {
         partida.mudarTurno();
 
         System.out.println("Fim dos testes de movimentação de peças");
-        /* 
+        
         //Testes de Xeque-Mate
         System.out.println("Testes de Xeque-Mate");
         partida = new Partida();
@@ -225,6 +225,5 @@ public class MainTestes {
         System.out.println(partida.getTabuleiro());
         partida.mudarTurno();
         System.out.println("Fim dos testes de Xeque-Mate " +partida.isFimDeJogo());
-        */
     }    
 }

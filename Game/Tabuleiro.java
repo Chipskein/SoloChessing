@@ -77,13 +77,13 @@ public class Tabuleiro {
     }
 
 
-    private boolean verificarSeReiEstaEmXeque(Posicao posicaoRei, Cor corRei) {
+    public boolean verificarSeReiEstaEmXeque(Posicao posicaoRei, Cor corRei) {
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 Peca pecaAdversaria = tabuleiro[i][j];
                 if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
                     if (pecaAdversaria.movimentoValido(posicaoRei, this)) {
-                        System.out.println("Rei em cheque");
+                        System.out.println("Rei em cheque("+posicaoRei+") "+ pecaAdversaria.getClass()+ "("+pecaAdversaria.getPosicao()+")");
                         return true;
                     }
                 }
@@ -111,45 +111,77 @@ public class Tabuleiro {
         //se não puder, verifica se alguma peça pode capturar a peça que está dando xeque
         //se nenhuma peça puder capturar a peça que está dando xeque, é xeque mate
         Posicao posicaoRei = (corJogadorAtual == Cor.BRANCO) ? reiBrancoPosicao : reiPretoPosicao;
+        System.out.println("Cor do Rei "+corJogadorAtual);
         System.out.println("Posição do rei: " + posicaoRei);
-        
         // Verifique se o rei está em xeque
-        /*
         if (!verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
             return false;
         }
-
+        
         // Simule todos os movimentos possíveis para verificar se é possível sair do xeque
+        
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 Peca peca = tabuleiro[i][j];
                 if (peca != null && peca.getCor() == corJogadorAtual) {
                     List<Posicao> movimentos = calcularMovimentosValidos(peca, this);
+                    for (Posicao movimento : movimentos) {
+                        Tabuleiro tabuleiroClone = clonarTabuleiro(tabuleiro);
+                        var previusPosicao = peca.getPosicao();
+                        peca.movimentar(movimento,tabuleiroClone);
+                        if (!tabuleiroClone.verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
+                            System.out.println("Previus pos: "+previusPosicao);
+                            System.out.println("Movimento válido: "+movimento);
+                            System.out.println(tabuleiroClone);
+                            return false;
+                        }
+                    }
                 }
             }
         }
-        */
-        return false;
+        return true;
     }
 
+    // Método para clonar o tabuleiro
+    public Tabuleiro clonarTabuleiro(Peca[][] pecas) {
+        Tabuleiro tabuleiroClone = new Tabuleiro();
+        for (int i = 0; i < this.linhas; i++) {
+            for (int j = 0; j < this.colunas; j++) {
+                Peca peca = pecas[i][j];
+                if (peca != null) {
+                    tabuleiroClone.tabuleiro[i][j] = peca.clone();
+                } else{
+                    tabuleiroClone.tabuleiro[i][j] = null;
+                }
+            }
+        }
+        return tabuleiroClone;
+    }
     
 
     @Override
-    public String toString(){
-        String s = "";
-        for (int i = 0; i < linhas; i++){
-            for (int j = 0; j < colunas; j++){
-                if (j==0)s += "|";
-                if (tabuleiro[i][j] == null){
-                    s += "   |";
-                }else{
-                    s += tabuleiro[i][j].toString()+" |";
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        s.append("   ");
+        for (int j = 0; j < colunas; j++) {
+            s.append(j).append("   ");
+        }
+        s.append("\n");
+        for (int i = 0; i < linhas; i++) {
+            s.append(i).append(" | ");
+            for (int j = 0; j < colunas; j++) {
+                if (tabuleiro[i][j] == null) {
+                    s.append("   |"); // Empty space
+                } else {
+                    s.append(tabuleiro[i][j].toString()).append(" |"); // Piece representation
                 }
             }
-            s += "\n";
+    
+            s.append("\n");
         }
-        return s;
+        return s.toString();
     }
+    
     public Peca getPeca(Posicao posicao){
         return tabuleiro[posicao.getLinha()][posicao.getColuna()];
     }

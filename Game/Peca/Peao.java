@@ -25,7 +25,7 @@ public  class Peao extends Peca {
                 (cor == Cor.BRANCO && destino.getLinha() >= posicao.getLinha()) || 
                 (cor == Cor.PRETO && destino.getLinha() <= posicao.getLinha())
             ) {
-            return false; 
+            return false;  
         }
 
         // Verifica se o peao esta indo para a diagonal
@@ -34,8 +34,8 @@ public  class Peao extends Peca {
             if (Math.abs(destino.getColuna() - posicao.getColuna()) != 1){
                 return false;
             }
-            // Verifica se a posição de destino é uma posição ocupada por uma peça inimiga
-            if (tabuleiro.getPeca(destino) != null && tabuleiro.getPeca(destino).getCor() == cor){
+            // Verifica se a posição de destino não é uma posição ocupada por uma peça inimiga
+            if (tabuleiro.getPeca(destino) != null && tabuleiro.getPeca(destino).getCor() == cor || tabuleiro.getPeca(destino) == null){
                 return false;
             }
         }
@@ -49,6 +49,13 @@ public  class Peao extends Peca {
                 return false;
             }
         }
+
+        //Verifica se a posição a frente do peão está ocupada
+        if (destino.getColuna() == posicao.getColuna() && tabuleiro.getPeca(destino) != null){
+            return false;
+        }
+        
+
         return true;
     }
 	

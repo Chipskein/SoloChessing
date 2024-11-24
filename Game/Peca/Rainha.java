@@ -29,9 +29,9 @@ public class Rainha extends Peca {
     @Override
     public String toString(){
         if (cor == Cor.BRANCO){
-            return "BRA";
+            return "BQ";
         }else{
-            return "PRA";
+            return "PQ";
         }
     }
 }
