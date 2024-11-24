@@ -3,6 +3,10 @@ import Game.Peca.Peca;
 import Game.Peca.Torre;
 import Game.Peca.Cavalo;
 import Game.Peca.Peao;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import Game.Peca.Bispo;
 import Game.Peca.Rainha;
 import Game.Peca.Rei;
@@ -12,6 +16,7 @@ public class Tabuleiro {
     //posições dos reis para facilitar a verificação de xeque
     private Posicao reiPretoPosicao=null;
     private Posicao reiBrancoPosicao=null;
+    
     /*
      * tabuleiro é uma matriz de peças
      * as primeiras duas linhas(0-1) são as peças pretas
@@ -24,6 +29,7 @@ public class Tabuleiro {
     public void setReiPretoPosicao(Posicao reiPretoPosicao) {
         this.reiPretoPosicao = reiPretoPosicao;
     }
+    
     public Posicao getReiBrancoPosicao() {
         return reiBrancoPosicao;
     }
@@ -56,9 +62,9 @@ public class Tabuleiro {
         tabuleiro[7][0] = new Torre(Cor.BRANCO, new Posicao(7,0));
         tabuleiro[7][1] = new Cavalo(Cor.BRANCO, new Posicao(7,1));
         tabuleiro[7][2] = new Bispo(Cor.BRANCO, new Posicao(7,2));
-        tabuleiro[7][3] = new Rei(Cor.BRANCO, new Posicao(7,3));
-        reiBrancoPosicao = new Posicao(7,3);
-        tabuleiro[7][4] = new Rainha(Cor.BRANCO, new Posicao(7,4));
+        tabuleiro[7][3] = new Rainha(Cor.BRANCO, new Posicao(7,3));
+        tabuleiro[7][4] = new Rei(Cor.BRANCO, new Posicao(7,4));
+        reiBrancoPosicao = new Posicao(7,4);
         tabuleiro[7][5] = new Bispo(Cor.BRANCO, new Posicao(7,5));
         tabuleiro[7][6] = new Cavalo(Cor.BRANCO, new Posicao(7,6));
         tabuleiro[7][7] = new Torre(Cor.BRANCO, new Posicao(7,7));
@@ -66,6 +72,67 @@ public class Tabuleiro {
     public Peca[][] getTabuleiro(){
         return tabuleiro;
     }
+    public Tabuleiro(Peca[][] tabuleiro){
+        this.tabuleiro = tabuleiro;
+    }
+
+
+    private boolean verificarSeReiEstaEmXeque(Posicao posicaoRei, Cor corRei) {
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                Peca pecaAdversaria = tabuleiro[i][j];
+                if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
+                    if (pecaAdversaria.movimentoValido(posicaoRei, this)) {
+                        System.out.println("Rei em cheque");
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private List<Posicao> calcularMovimentosValidos(Peca peca, Tabuleiro tabuleiro) {
+        List<Posicao> movimentosValidos = new ArrayList<>();
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                Posicao destino = new Posicao(i, j);
+                if (peca.movimentoValido(destino, tabuleiro)) {
+                    movimentosValidos.add(destino);
+                }
+            }
+        }
+        return movimentosValidos;
+    }
+
+    public boolean verificarCheckMate(Cor corJogadorAtual){
+        //verifica se o rei do jogador atual está em xeque
+        //se estiver, verifica se ele pode se mover para alguma posição
+        //se não puder, verifica se alguma peça pode capturar a peça que está dando xeque
+        //se nenhuma peça puder capturar a peça que está dando xeque, é xeque mate
+        Posicao posicaoRei = (corJogadorAtual == Cor.BRANCO) ? reiBrancoPosicao : reiPretoPosicao;
+        System.out.println("Posição do rei: " + posicaoRei);
+        
+        // Verifique se o rei está em xeque
+        /*
+        if (!verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
+            return false;
+        }
+
+        // Simule todos os movimentos possíveis para verificar se é possível sair do xeque
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                Peca peca = tabuleiro[i][j];
+                if (peca != null && peca.getCor() == corJogadorAtual) {
+                    List<Posicao> movimentos = calcularMovimentosValidos(peca, this);
+                }
+            }
+        }
+        */
+        return false;
+    }
+
+    
 
     @Override
     public String toString(){

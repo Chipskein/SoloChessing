@@ -20,6 +20,14 @@ public  class Peao extends Peca {
             return false;
         };
 
+         // Verifica se o peao está se movendo para trás
+            if (
+                (cor == Cor.BRANCO && destino.getLinha() >= posicao.getLinha()) || 
+                (cor == Cor.PRETO && destino.getLinha() <= posicao.getLinha())
+            ) {
+            return false; 
+        }
+
         // Verifica se o peao esta indo para a diagonal
         if (destino.getColuna() != posicao.getColuna()){
             // Verifica se a diferença entre as colunas é maior que 1
@@ -31,11 +39,13 @@ public  class Peao extends Peca {
                 return false;
             }
         }
-        if(Math.abs(destino.getLinha() - posicao.getLinha()) > 1){
-            if (posicao.getLinha() != 1 && posicao.getLinha() != 6){
-                return false;
-            } else if(Math.abs(destino.getLinha() - posicao.getLinha())>2) {
-                // o peão não pode se mover mais de 2 casas caso seja o primeiro movimento
+        
+        if (Math.abs(destino.getLinha() - posicao.getLinha()) > 2) {
+            return false;
+        }
+
+        if (Math.abs(destino.getLinha() - posicao.getLinha()) == 2) {
+            if (posicao.getLinha() != 1 && posicao.getLinha() != 6) {
                 return false;
             }
         }

@@ -4,9 +4,6 @@ public class Posicao{
     private int coluna;
 
     public Posicao(int linha, int coluna){
-        if (linha < 0 || linha > 7 || coluna < 0 || coluna > 7){
-            throw new IllegalArgumentException("Posição inválida");
-        }
         this.linha = linha;
         this.coluna = coluna;
     }

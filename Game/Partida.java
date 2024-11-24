@@ -24,11 +24,25 @@ public class Partida {
         //check if game end
         //if is not ended change turn
     }
-    public void mudarTurno(){
+    public void mudarTurno() throws CloneNotSupportedException{
+        jogadorAtual.incrementarMovimentos();
+        //se checkmate, fim de jogo
         if (jogadorAtual == jogador1){
             jogadorAtual = jogador2;
+            if(tabuleiro.verificarCheckMate(jogador2.getCor())){
+                fimDeJogo = true;
+                jogador1.setVencedor(true);
+                System.out.println("Fim de jogo");
+                return;
+            };
         }else{
             jogadorAtual = jogador1;
+            if(tabuleiro.verificarCheckMate(jogador1.getCor())){
+                fimDeJogo = true;
+                jogador2.setVencedor(true);
+                System.out.println("Fim de jogo");
+                return;
+            };
         }
     }
     public Jogador getJogadorAtual(){

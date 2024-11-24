@@ -3,7 +3,7 @@ package Game.Peca;
 import Game.Posicao;
 import Game.Tabuleiro;
 import Game.Cor;
-public abstract class Peca {
+public abstract class Peca implements Cloneable{
     protected Cor cor;
     protected Posicao posicao;
     protected boolean capturada = false;
@@ -12,7 +12,8 @@ public abstract class Peca {
         this.posicao = posicao;
     }
 
-    public  boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro){
+
+    public boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro){
         // Verifica se a posição esta dentro do tabuleiro
         if (destino.getLinha() < 0 || destino.getLinha() > 7 || destino.getColuna() < 0 || destino.getColuna() > 7){
             return false;
@@ -31,6 +32,10 @@ public abstract class Peca {
         int x = this.posicao.getLinha() + passoX;
         int y = this.posicao.getColuna() + passoY;
         while (x != destino.getLinha() && y != destino.getColuna()) {
+            // Verifica se está dentro dos limites do tabuleiro
+            if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+                return false; // Fora dos limites
+            }
             Peca pecaNoCaminho = tabuleiro.getPeca(new Posicao(x, y));
             if (pecaNoCaminho != null) {
                 return false;
@@ -55,6 +60,9 @@ public abstract class Peca {
         int x = this.posicao.getLinha() + passoX;
         int y = this.posicao.getColuna() + passoY;
         while (x != destino.getLinha() || y != destino.getColuna()) {
+            if (x < 0 || x >= 8 || y < 0 || y >= 8) {
+                return false; // Fora dos limites
+            }
             Peca pecaNoCaminho = tabuleiro.getPeca(new Posicao(x, y));
             if (pecaNoCaminho != null) {
                 return false;
@@ -85,5 +93,9 @@ public abstract class Peca {
     public Cor getCor(){
         return cor;
     };    
+
+    public Posicao getPosicao(){
+        return posicao;
+    }
 
 }

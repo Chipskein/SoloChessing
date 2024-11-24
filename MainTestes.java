@@ -174,19 +174,57 @@ public class MainTestes {
         partida.mudarTurno();
 
         System.out.println("Fim dos testes de movimentação de peças");
-        /*
+        /* 
         //Testes de Xeque-Mate
         System.out.println("Testes de Xeque-Mate");
         partida = new Partida();
         partida.iniciarJogo(false);
         System.out.println("Tabuleiro inicial");
         System.out.println(partida.getTabuleiro());
+        System.out.println("Mate do louco");
+        System.out.println("Turno 1");
+        //turno 1 branco
+        teste=partida.getTabuleiro().getTabuleiro()[6][0].movimentoValido(new Posicao(4,0), partida.getTabuleiro());
+        if(!teste){
+            throw new Exception("Teste Fail");
+        }
+        System.out.println("Movendo peão[6][6] linha para [4][6] 2 casas a frente " + teste);
+        partida.getTabuleiro().getTabuleiro()[6][6].movimentar(new Posicao(4,6), partida.getTabuleiro());
+        System.out.println(partida.getTabuleiro());
+        partida.mudarTurno();
+        
+        //turno 2 preto
+        System.out.println("Turno 2");
+        teste=partida.getTabuleiro().getTabuleiro()[1][4].movimentoValido(new Posicao(2,4), partida.getTabuleiro());
+        if(!teste){
+            throw new Exception("Teste Fail");
+        }
+        System.out.println("Movendo peão[1][4] linha para [2][4] 1 casa a frente " + teste);
+        partida.getTabuleiro().getTabuleiro()[1][4].movimentar(new Posicao(2,4), partida.getTabuleiro());
+        System.out.println(partida.getTabuleiro());
+        partida.mudarTurno();
+
+        //turno 3 branco
+        System.out.println("Turno 3");
+        teste=partida.getTabuleiro().getTabuleiro()[6][5].movimentoValido(new Posicao(5,5), partida.getTabuleiro());
+        if(!teste){
+            throw new Exception("Teste Fail");
+        }
+        System.out.println("Movendo peão[6][5] linha para [5][5] 1 casa a frente " + teste);
+        partida.getTabuleiro().getTabuleiro()[6][5].movimentar(new Posicao(5,5), partida.getTabuleiro());
+        System.out.println(partida.getTabuleiro());
+        partida.mudarTurno();
+        //turno 4 preto (xeque)
+        System.out.println("Turno 4");
+        teste=partida.getTabuleiro().getTabuleiro()[0][3].movimentoValido(new Posicao(4,7), partida.getTabuleiro());
+        if(!teste){
+            throw new Exception("Teste Fail");
+        }
+        System.out.println("Movendo Rainha[0][3] linha para [4][7] 2 casas a frente " + teste);
+        partida.getTabuleiro().getTabuleiro()[0][3].movimentar(new Posicao(4,7), partida.getTabuleiro());
+        System.out.println(partida.getTabuleiro());
+        partida.mudarTurno();
+        System.out.println("Fim dos testes de Xeque-Mate " +partida.isFimDeJogo());
         */
-
-        
-
-
-        
-
     }    
 }
