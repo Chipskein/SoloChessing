@@ -1,4 +1,5 @@
 # Solo Chessing
+
 ### DeadLine 06/12/2024
 ### BUGS
 * [X] Peão na primeira primeira jogada consegue pular peças
@@ -12,6 +13,10 @@
 * [ ] Arrumar Design da SideBar
 * [ ] Refatorar Main
 * [ ] Áudio não funciona em alguns PC's
+
+#### Dupla
+* [Bruno Nascimento](https://github.com/Chipskein)
+* [Vinicius Taveres](https://github.com/Viniciusilvainfo)
 
 
 
