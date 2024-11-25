@@ -47,21 +47,20 @@ public class Main extends JPanel {
                         selectedPieceTile = new Point(col, row);
                         selectedTile=null;
                     }  else if (selectedPieceTile != null) {
-                        // DOES NOT WORK
-                        if (boardSound != null && boardSound.isOpen()) {
-                            if (boardSound.isRunning()) {
-                                boardSound.stop();
-                            }
-                            System.out.println(boardSound);
-                            System.out.println("Playing sound");
-                            boardSound.setFramePosition(0);
-                            boardSound.start();
-                        }
-
                         selectedMovePieceTile = new Point(col, row);
                         System.out.println("Selected move at (" + row + ", " + col + ")");
                         var peca=tabuleiro.getPeca(new Posicao(selectedPieceTile.y, selectedPieceTile.x));
                         if(peca.movimentoValido(new Posicao(row, col), tabuleiro)){
+                            // Does not work on my machine for some reason
+                            if (boardSound != null && boardSound.isOpen()) {
+                                if (boardSound.isRunning()) {
+                                    boardSound.stop();
+                                }
+                                System.out.println(boardSound);
+                                System.out.println("Playing sound");
+                                boardSound.setFramePosition(0);
+                                boardSound.start();
+                            }
                             peca.movimentar(new Posicao(row, col),tabuleiro);
                             selectedPieceTile = null;
                             selectedMovePieceTile = null;
@@ -69,7 +68,7 @@ public class Main extends JPanel {
                             try{
                                 partida.mudarTurno();
                             } catch (CloneNotSupportedException ex){
-                                System.out.println("Erro ao mudar turno");
+                                System.out.println("Erro ao mudar turno: "+ex.getMessage());
                             }
                             currentPlayer=partida.getJogadorAtual().getCor();
                             updateCurrentPlayerLabel();
@@ -96,7 +95,6 @@ public class Main extends JPanel {
  
     private void loadAudio(){
         try{
-            //Does not work
             InputStream audioSrc = getClass().getResourceAsStream("/Resources/audios/teste.wav");
             InputStream bufferedIn = new BufferedInputStream(audioSrc);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
