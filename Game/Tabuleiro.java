@@ -10,12 +10,28 @@ import java.util.List;
 import Game.Peca.Bispo;
 import Game.Peca.Rainha;
 import Game.Peca.Rei;
-public class Tabuleiro {
+public class Tabuleiro implements Cloneable{
     private int linhas=8;
     private int colunas=8;
     //posições dos reis para facilitar a verificação de xeque
     private Posicao reiPretoPosicao=null;
     private Posicao reiBrancoPosicao=null;
+    
+    @Override
+    public Tabuleiro clone() {
+        Peca[][] tabuleiroClone = new Peca[linhas][colunas];
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                Peca peca = tabuleiro[i][j];
+                if (peca != null) {
+                    tabuleiroClone[i][j] = peca.clone();
+                } else {
+                    tabuleiroClone[i][j] = null;
+                }
+            }
+        }
+        return new Tabuleiro(tabuleiroClone);
+    }
     
     /*
      * tabuleiro é uma matriz de peças
@@ -118,45 +134,30 @@ public class Tabuleiro {
         if (!verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
             return false;
         }
-        
         // Simule todos os movimentos possíveis para verificar se é possível sair do xeque
+        Tabuleiro simulacao;
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 Peca peca = tabuleiro[i][j];
+                simulacao=this.clone();
                 if (peca != null && peca.getCor() == corJogadorAtual) {
-                    Tabuleiro tabuleiroClone = clonarTabuleiro(tabuleiro);
-                    List<Posicao> movimentos = calcularMovimentosValidos(peca, tabuleiroClone);
+                    List<Posicao> movimentos = calcularMovimentosValidos(peca, simulacao);
                     for (Posicao movimento : movimentos) {
-                        tabuleiroClone = clonarTabuleiro(tabuleiro);
                         var previusPosicao = peca.getPosicao();
-                        peca.movimentar(movimento,tabuleiroClone);
-                        if (!tabuleiroClone.verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
+                        peca.movimentar(movimento,simulacao);
+                        if (!this.verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
                             System.out.println("Previus pos: "+previusPosicao);
                             System.out.println("Movimento válido: "+movimento);
-                            System.out.println(tabuleiroClone);
+                            System.out.println(simulacao);
+                            simulacao=null;
                             return false;
                         }
                     }
                 }
             }
         }
+        simulacao=null;
         return true;
-    }
-
-    // Método para clonar o tabuleiro
-    public Tabuleiro clonarTabuleiro(Peca[][] pecas) {
-        Tabuleiro tabuleiroClone = new Tabuleiro();
-        for (int i = 0; i < this.linhas; i++) {
-            for (int j = 0; j < this.colunas; j++) {
-                Peca peca = pecas[i][j];
-                if (peca != null) {
-                    tabuleiroClone.tabuleiro[i][j] = peca.clone();
-                } else{
-                    tabuleiroClone.tabuleiro[i][j] = null;
-                }
-            }
-        }
-        return tabuleiroClone;
     }
     
 

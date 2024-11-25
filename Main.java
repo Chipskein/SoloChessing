@@ -5,7 +5,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -15,7 +14,7 @@ import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
 public class Main extends JPanel {
-    private static final int TILE_SIZE = 120;
+    private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
     private Partida partida;
     private Tabuleiro tabuleiro;
@@ -75,13 +74,9 @@ public class Main extends JPanel {
                             currentPlayer=partida.getJogadorAtual().getCor();
                             updateCurrentPlayerLabel();
                             if (partida.isFimDeJogo()) {
-                                JOptionPane.showMessageDialog(Main.this, 
-                                "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", 
-                                "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(Main.this, "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
                                 System.exit(0);
                             }
-                            //update
-                            tabuleiro=partida.getTabuleiro();
                         }
                     } else{
                         selectedTile = null;
@@ -169,7 +164,7 @@ public class Main extends JPanel {
     public static void main(String[] args) {
         JFrame frame = new JFrame("SoloChessing");
         Partida partida = new Partida();
-        partida.iniciarJogo(true);
+        partida.iniciarJogo();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         JLabel currentPlayerLabel = new JLabel("Current Player: White");

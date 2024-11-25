@@ -6,7 +6,7 @@ public class MainTestes {
         System.out.println("Testes de movimentação de peças");
         Partida partida = new Partida();
         //iniciarJogo com false para não iniciar o game loop
-        partida.iniciarJogo(false);
+        partida.iniciarJogo();
         System.out.println("Tabuleiro inicial");
         System.out.println(partida.getTabuleiro());
         System.out.println("Turno 1");
@@ -178,7 +178,7 @@ public class MainTestes {
         //Testes de Xeque-Mate
         System.out.println("Testes de Xeque-Mate");
         partida = new Partida();
-        partida.iniciarJogo(false);
+        partida.iniciarJogo();
         System.out.println("Tabuleiro inicial");
         System.out.println(partida.getTabuleiro());
         System.out.println("Mate do louco");
