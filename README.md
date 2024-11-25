@@ -2,10 +2,10 @@
 ### DeadLine 06/12/2024
 ### BUGS
 * [X] Peão na primeira primeira jogada consegui pular peças e ir pra segunda casa a frente
+* [X] Não é possivel renderizar o caminho verde possivel das peças de cima para baixo aparece somente de baixo pra cima(Resolvido com g.SetXorMode)
 * [ ] Adicionar Mais Testes no MainTestes um conjunto de testes para cada Peça
 * [ ] Testar Movimentação das peças
 * [ ] Revisar Sistema de Xeque-mate
-* [ ] Não é possivel renderizar o caminho verde possivel das peças de cima para baixo aparece somente de baixo pra cima
 * [ ] Adicionar Documentação(JavaDOC nas funções e no header das Classes)
 * [ ] Implementar Promoção do Peão
 * [ ] Implementar Timer para fazer a jogada

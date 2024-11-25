@@ -25,6 +25,9 @@ public class Main extends JPanel {
     private Point selectedMovePieceTile = null;
     private JLabel currentPlayerLabel;
     private Clip boardSound;
+    private Color highlightColor = new Color(8, 200, 0, 128);
+    private Color moveColor = new Color(255, 200, 0, 128);
+
     
     public Main(Partida partida, JLabel currentPlayerLabel) {
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
@@ -129,7 +132,6 @@ public class Main extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
         for (int row = 0; row < BOARD_SIZE; row++) {
             for (int col = 0; col < BOARD_SIZE; col++) {
                 if ((row + col) % 2 == 0) {
@@ -138,15 +140,18 @@ public class Main extends JPanel {
                     g.setColor(Color.LIGHT_GRAY);
                 }
                 g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                
                 if (selectedPieceTile != null && selectedPieceTile.x == col && selectedPieceTile.y == row) {
-                    g.setColor(new Color(255, 200, 0, 128));
+                    g.setColor(moveColor);
                     g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     var pos=tabuleiro.calcularMovimentosValidos(tabuleiro.getPeca(new Posicao(row, col)), tabuleiro);
                     for (Posicao movimento : pos) {
                         if(currentPlayer==Cor.PRETO){
                             System.out.println("Movimento: "+movimento.getLinha() + " "+ movimento.getColuna());
                         }
-                        g.setColor(new Color(8, 200, 0 ,128));
+                        g.setPaintMode();
+                        g.setXORMode(Color.WHITE);//Only way to work on some tiles
+                        g.setColor(highlightColor);
                         g.fillRect(movimento.getColuna() * TILE_SIZE, movimento.getLinha() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                         System.out.println("Highlighting tile: (" + movimento.getLinha() + ", " + movimento.getColuna() + ")");
                     }
@@ -157,6 +162,7 @@ public class Main extends JPanel {
                 }
             }
         }
+        
     }
 
     public static void main(String[] args) {

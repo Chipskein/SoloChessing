@@ -1,5 +1,8 @@
+import Game.Cor;
 import Game.Partida;
+import Game.Peca.*;
 import Game.Posicao;
+import Game.Tabuleiro;
 public class MainTestes {
     public static void main(String[] args) throws Exception {
         //Testes de movimentação de peças
@@ -225,5 +228,33 @@ public class MainTestes {
         System.out.println(partida.getTabuleiro());
         partida.mudarTurno();
         System.out.println("Fim dos testes de Xeque-Mate " +partida.isFimDeJogo());
+
+        //Testes de Movimentação de peças
+        //Peão
+        System.out.println("Testes de movimentação de peças");
+        System.out.println("Peão");
+        var pecas=new Peca[8][8];
+        for(int i=0;i<8;i++){
+            pecas[1][i]=new Peao(Cor.PRETO,new Posicao(1, i));
+        }
+        pecas[6][4]=new Peao(Cor.BRANCO,new Posicao(6, 4));
+        var tab=new Tabuleiro(pecas);
+        System.out.println("Tabuleiro inicial");
+        System.out.println(tab);
+        System.out.println("Teste de primeiro movimento");
+        teste=tab.getTabuleiro()[6][4].movimentoValido(new Posicao(4,4), tab);
+        if(!teste){
+            throw new Exception("Teste Fail");
+        }
+        System.out.println("Movendo peão[6][4] linha para [4][4] 2 casas a frente " + teste);
+        tab.getTabuleiro()[6][4].movimentar(new Posicao(4,4), tab);
+        System.out.println(tab);
+        
+
+
+
+        
+
+
     }    
 }
