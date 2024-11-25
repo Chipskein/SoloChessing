@@ -8,10 +8,10 @@
 * [ ] Testar Movimentação das peças
 * [ ] Refatorar Main
 * [ ] Adicionar Mais Testes no MainTestes um conjunto de testes para cada Peça
-* [ ] Implementar TImer para fazer a jogada
+* [ ] Implementar Timer para fazer a jogada
 * [ ] Implementar Promoção do Peão
 * [ ] Adicionar Documentação(JavaDOC nas funções e no header das Classes)
-
+* [ ] Arrumar Design da SideBar
 
 
 
