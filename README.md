@@ -13,6 +13,7 @@
 * [ ] Arrumar Design da SideBar
 * [ ] Refatorar Main
 * [ ] Áudio não funciona em alguns PC's
+* [ ] Arrumar README.md
 
 #### Dupla
 * [Bruno Nascimento](https://github.com/Chipskein)
