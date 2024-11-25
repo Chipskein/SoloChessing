@@ -22,10 +22,7 @@ public  class Peao extends Peca {
         };
 
          // Verifica se o peao está se movendo para trás
-            if (
-                (cor == Cor.BRANCO && destino.getLinha() >= posicao.getLinha()) || 
-                (cor == Cor.PRETO && destino.getLinha() <= posicao.getLinha())
-            ) {
+        if ((cor == Cor.BRANCO && destino.getLinha() >= posicao.getLinha()) || (cor == Cor.PRETO && destino.getLinha() <= posicao.getLinha())) {
             return false;  
         }
 
@@ -47,6 +44,10 @@ public  class Peao extends Peca {
 
         if (Math.abs(destino.getLinha() - posicao.getLinha()) == 2) {
             if (posicao.getLinha() != 1 && posicao.getLinha() != 6) {
+                return false;
+            }
+            // Verifica se a posição a frente do peão está ocupada e se a posição a duas casas a frente do peão está ocupada
+            if (tabuleiro.getPeca(new Posicao((destino.getLinha() + posicao.getLinha()) / 2, destino.getColuna())) != null || tabuleiro.getPeca(destino) != null) {
                 return false;
             }
         }
