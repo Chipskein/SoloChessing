@@ -60,7 +60,25 @@ public  class Peao extends Peca {
 
         return true;
     }
-	
+
+
+    /**
+     * Rodar caso o movimento seja valido
+     * @param destino
+     * @param tabuleiro
+     * @return se o peão pode ser promovido nessa posição
+     */
+    public boolean podePromover(Posicao destino,Tabuleiro tabuleiro){
+        // é promovido quando chega do outro lado do tabuleiro
+        // Branco começa na linha 7
+        // Preto na linha 0
+        if(cor==Cor.BRANCO){
+            return posicao.getLinha()==0;
+        } else{
+            return posicao.getLinha()==7;
+        }
+    }
+    
     @Override
     public String toString(){
         if (cor == Cor.BRANCO){
