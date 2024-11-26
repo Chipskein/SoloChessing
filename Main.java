@@ -7,15 +7,24 @@ import java.awt.event.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.LocalDateTime;
 
 import Game.Tabuleiro;
 import Game.Peca.Peca;
 import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
+
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Date;
+import java.util.Calendar;
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
+    private static final long TURN_DURATION_SECONDS = 120;//5 seconds for testing 120 default
+    
     private Partida partida;
     private Tabuleiro tabuleiro;
     private Image[][] pieceImages;
@@ -27,13 +36,52 @@ public class Main extends JPanel {
     private Clip boardSound;
     private Color highlightColor = new Color(8, 200, 0, 128);
     private Color moveColor = new Color(255, 200, 0, 128);
-
+    private JLabel currentTimerLabel;
+    private long t=TURN_DURATION_SECONDS;
+    public Main(Partida partida, JLabel currentPlayerLabel,JLabel currentTimerLabel) {
+        //Timer turn
+        Timer timer = new Timer();
+        long delay_turn_ms = TURN_DURATION_SECONDS*1000; //sec * ms
+        var c=Calendar.getInstance();
+        c.setTime(new Date());
+        c.add(Calendar.SECOND,(int)TURN_DURATION_SECONDS);
+        Date now=c.getTime();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Time is up!");
+                try{
+                    atualizar();
+                }
+                catch(Exception e){
+                    System.out.println(e.getMessage());
+                }
+                
+            }
+        };
+        timer.scheduleAtFixedRate(task, now, delay_turn_ms);
+        //Timer Update time lavel
+        Timer timer2 = new Timer();
+        TimerTask task2 = new TimerTask() {
+            @Override
+            public void run() {
+                if(t>0){
+                    t--;
+                    updateCurrentTimerLabel();
+                }
+            }
+        };
+        timer2.scheduleAtFixedRate(task2, new Date(), 1000);
     
-    public Main(Partida partida, JLabel currentPlayerLabel) {
+        
+        
+
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
         this.tabuleiro = partida.getTabuleiro();
         this.partida = partida;
         this.currentPlayerLabel = currentPlayerLabel;
+        this.currentTimerLabel=currentTimerLabel;
+        
         updateCurrentPlayerLabel();
         loadPieceImages();
         loadAudio();
@@ -68,17 +116,8 @@ public class Main extends JPanel {
                             selectedPieceTile = null;
                             selectedMovePieceTile = null;
                             loadPieceImages();
-                            try{
-                                partida.mudarTurno();
-                            } catch (CloneNotSupportedException ex){
-                                System.out.println("Erro ao mudar turno: "+ex.getMessage());
-                            }
-                            currentPlayer=partida.getJogadorAtual().getCor();
-                            updateCurrentPlayerLabel();
-                            if (partida.isFimDeJogo()) {
-                                JOptionPane.showMessageDialog(Main.this, "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
-                                System.exit(0);
-                            }
+                            //re-use this
+                            atualizar();
                         }
                     } else{
                         selectedTile = null;
@@ -92,8 +131,28 @@ public class Main extends JPanel {
         });
     }
 
+    
+    private void atualizar(){
+        this.t=TURN_DURATION_SECONDS;
+        try{
+            partida.mudarTurno();
+        } catch (CloneNotSupportedException ex){
+            System.out.println("Erro ao mudar turno: "+ex.getMessage());
+        }
+        currentPlayer=partida.getJogadorAtual().getCor();
+        updateCurrentPlayerLabel();
+        if (partida.isFimDeJogo()) {
+            JOptionPane.showMessageDialog(Main.this, "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        }
+    }
+    
     private void updateCurrentPlayerLabel() {
-        currentPlayerLabel.setText("Current Player: " + (currentPlayer == Cor.BRANCO ? "White" : "Black"));
+        currentPlayerLabel.setText("Jogador Atual: " + (currentPlayer == Cor.BRANCO ? "Branco" : "Preto"));
+    }
+
+    private void updateCurrentTimerLabel() {
+        currentTimerLabel.setText("Timer: "+t);
     }
  
     private void loadAudio(){
@@ -171,14 +230,18 @@ public class Main extends JPanel {
         partida.iniciarJogo();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        JLabel currentPlayerLabel = new JLabel("Current Player: White");
+        JLabel currentPlayerLabel = new JLabel("Jogador Atual: Branco");
         currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         currentPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel currentTimerLabel = new JLabel("Timer: "+TURN_DURATION_SECONDS);
+        currentTimerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        currentTimerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BorderLayout());
         sidebar.setPreferredSize(new Dimension(200, BOARD_SIZE * TILE_SIZE));
-        sidebar.add(currentPlayerLabel, BorderLayout.NORTH);
-        Main boardPanel = new Main(partida,currentPlayerLabel);
+        sidebar.add(currentPlayerLabel, BorderLayout.CENTER);
+        sidebar.add(currentTimerLabel, BorderLayout.PAGE_END);
+        Main boardPanel = new Main(partida,currentPlayerLabel,currentTimerLabel);
         frame.add(boardPanel, BorderLayout.CENTER);
         frame.add(sidebar, BorderLayout.EAST);
         frame.pack();
