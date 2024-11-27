@@ -6,12 +6,12 @@
 * [X] Não é possivel renderizar o caminho verde possivel das peças em algumas partes do tabuleiro(Resolvido com g.SetXorMode)
 * [X] Implementar Timer para fazer a jogada
 * [X] Implementar Promoção do Peão
+* [ ] Refatorar Main
 * [ ] Adicionar Mais Testes no MainTestes um conjunto de testes para cada Peça
 * [ ] Adicionar Documentação(JavaDOC nas funções e no header das Classes)
 * [ ] Revisar Sistema de Xeque-mate
 * [ ] Testar Movimentação das peças
 * [ ] Arrumar Design da SideBar
-* [ ] Refatorar Main
 * [ ] Arrumar README.md
 
 #### Dupla
