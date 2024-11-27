@@ -21,6 +21,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Date;
 import java.util.Calendar;
+/*
+    TODO:REFATORAR ISSO AQUI KKKKKKKK ;p
+*/
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
