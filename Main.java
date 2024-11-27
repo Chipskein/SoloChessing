@@ -7,10 +7,11 @@ import java.awt.event.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
-import java.time.LocalDateTime;
+
 
 import Game.Tabuleiro;
 import Game.Peca.Peca;
+import Game.Peca.Peao;
 import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
@@ -24,11 +25,12 @@ public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
     private static final long TURN_DURATION_SECONDS = 120;//5 seconds for testing 120 default
-    
+   
     private Partida partida;
     private Tabuleiro tabuleiro;
     private Image[][] pieceImages;
     private Cor currentPlayer = Cor.BRANCO;
+    private Posicao promotedPiecePos = null;
     private Point selectedTile = null;
     private Point selectedPieceTile = null;
     private Point selectedMovePieceTile = null;
@@ -37,8 +39,11 @@ public class Main extends JPanel {
     private Color highlightColor = new Color(8, 200, 0, 128);
     private Color moveColor = new Color(255, 200, 0, 128);
     private JLabel currentTimerLabel;
+    private JFrame frame;
+    public boolean show=false;
     private long t=TURN_DURATION_SECONDS;
-    public Main(Partida partida, JLabel currentPlayerLabel,JLabel currentTimerLabel) {
+    public Main(Partida partida, JLabel currentPlayerLabel,JLabel currentTimerLabel,JFrame frame) {
+        this.frame=frame;
         //Timer turn
         Timer timer = new Timer();
         long delay_turn_ms = TURN_DURATION_SECONDS*1000; //sec * ms
@@ -72,9 +77,6 @@ public class Main extends JPanel {
             }
         };
         timer2.scheduleAtFixedRate(task2, new Date(), 1000);
-    
-        
-        
 
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
         this.tabuleiro = partida.getTabuleiro();
@@ -113,6 +115,14 @@ public class Main extends JPanel {
                                 boardSound.start();
                             }
                             peca.movimentar(new Posicao(row, col),tabuleiro);
+                            //Promocao de peao
+                            if(peca.getClass()==Peao.class){
+                                Peao p = (Peao) peca;
+                                if (p.podePromover(new Posicao(row, col), tabuleiro)){
+                                    show=true;
+                                    promotedPiecePos = new Posicao(row, col);
+                                }
+                            }
                             selectedPieceTile = null;
                             selectedMovePieceTile = null;
                             loadPieceImages();
@@ -133,6 +143,9 @@ public class Main extends JPanel {
 
     
     private void atualizar(){
+        if (show) {
+            openImageSelectionDialog(frame);
+        }
         this.t=TURN_DURATION_SECONDS;
         try{
             partida.mudarTurno();
@@ -140,6 +153,7 @@ public class Main extends JPanel {
             System.out.println("Erro ao mudar turno: "+ex.getMessage());
         }
         currentPlayer=partida.getJogadorAtual().getCor();
+        
         updateCurrentPlayerLabel();
         if (partida.isFimDeJogo()) {
             JOptionPane.showMessageDialog(Main.this, "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
@@ -169,6 +183,7 @@ public class Main extends JPanel {
         }
 
     }
+
     private void loadPieceImages() {
         pieceImages = new Image[BOARD_SIZE][BOARD_SIZE];
         for (Peca[] pecas : this.tabuleiro.getTabuleiro()) {
@@ -222,6 +237,42 @@ public class Main extends JPanel {
             }
         }
         
+        
+    }
+    
+    private void openImageSelectionDialog(JFrame parent) {
+        JDialog dialog = new JDialog(parent, "Selecionar Imagem", true);
+        dialog.setLayout(new GridLayout(0, 4, 10, 10));
+        String[] PROMO_PEAO_OPTIONS_BLACK = {"Resources/sprites/B_QUEEN.png","Resources/sprites/B_TOWER.png","Resources/sprites/B_HORSE.png","Resources/sprites/B_BISHOP.png"};
+        String[] PROMO_PEAO_OPTIONS_WHITE = {"Resources/sprites/W_QUEEN.png","Resources/sprites/W_TOWER.png","Resources/sprites/W_HORSE.png","Resources/sprites/W_BISHOP.png"};
+        String[] PROMO_PEAO_OPTIONS = Cor.BRANCO==currentPlayer ? PROMO_PEAO_OPTIONS_WHITE:PROMO_PEAO_OPTIONS_BLACK;
+        for (String imagePath : PROMO_PEAO_OPTIONS) {
+            ImageIcon icon = new ImageIcon(imagePath);
+            Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+            JButton imageButton = new JButton(scaledIcon);
+            imageButton.setBorder(BorderFactory.createEmptyBorder()); // Optional: Remove border for a cleaner look
+            imageButton.setContentAreaFilled(false); // Optional: Remove background
+            imageButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Selected image: " + imagePath);
+                    if(promotedPiecePos!=null){
+                        String extractedPart = imagePath.substring("Resources/sprites/".length(), imagePath.indexOf(".")).split("_")[1];
+                        tabuleiro.promoverPeao(promotedPiecePos, extractedPart);
+                    }
+                    show=false;
+                    loadPieceImages();
+                    atualizar();
+                    dialog.dispose();
+                }
+            });
+            dialog.add(imageButton);
+        }
+
+        dialog.setSize(400, 200);
+        dialog.setLocationRelativeTo(parent);
+        dialog.setVisible(true);
     }
 
     public static void main(String[] args) {
@@ -241,11 +292,9 @@ public class Main extends JPanel {
         sidebar.setPreferredSize(new Dimension(200, BOARD_SIZE * TILE_SIZE));
         sidebar.add(currentPlayerLabel, BorderLayout.CENTER);
         sidebar.add(currentTimerLabel, BorderLayout.PAGE_END);
-        Main boardPanel = new Main(partida,currentPlayerLabel,currentTimerLabel);
+        Main boardPanel = new Main(partida,currentPlayerLabel,currentTimerLabel,frame);
         frame.add(boardPanel, BorderLayout.CENTER);
         frame.add(sidebar, BorderLayout.EAST);
-        frame.pack();
-        frame.setVisible(true);
         frame.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -255,6 +304,8 @@ public class Main extends JPanel {
                 }
             }
         });
+        frame.pack();
+        frame.setVisible(true);
         frame.setFocusable(true);
     }
 }

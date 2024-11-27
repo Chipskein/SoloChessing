@@ -160,7 +160,26 @@ public class Tabuleiro implements Cloneable{
         return true;
     }
 
-    //TODO:IMPLEMENTAR PROMOVER PEÃO
+    public void promoverPeao(Posicao peaoPos,String tipo){
+        Peca peao = tabuleiro[peaoPos.getLinha()][peaoPos.getColuna()];
+        Peca novaPeca = null;
+        switch (tipo){
+            case "QUEEN":
+                novaPeca = new Rainha(peao.getCor(),peao.getPosicao());
+                break;
+            case "TOWER":
+                novaPeca = new Torre(peao.getCor(),peao.getPosicao());
+                break;
+            case "HORSE":
+                novaPeca = new Cavalo(peao.getCor(),peao.getPosicao());
+                break;
+            case "BISHOP":
+                novaPeca = new Bispo(peao.getCor(),peao.getPosicao());
+                break;
+        }
+        tabuleiro[peao.getPosicao().getLinha()][peao.getPosicao().getColuna()] = novaPeca;
+    }
+    
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();

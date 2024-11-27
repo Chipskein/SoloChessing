@@ -73,9 +73,9 @@ public  class Peao extends Peca {
         // Branco começa na linha 7
         // Preto na linha 0
         if(cor==Cor.BRANCO){
-            return posicao.getLinha()==0;
+            return destino.getLinha()==0;
         } else{
-            return posicao.getLinha()==7;
+            return destino.getLinha()==7;
         }
     }
     
