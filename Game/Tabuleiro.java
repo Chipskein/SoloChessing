@@ -10,49 +10,41 @@ import java.util.List;
 import Game.Peca.Bispo;
 import Game.Peca.Rainha;
 import Game.Peca.Rei;
+/**
+ * Tabuleiro é a classe que representa o tabuleiro de xadrez.
+ *
+ * <p>
+ * A classe {@code Tabuleiro} representa um tabuleiro de xadrez.
+ * Ele contém uma matriz 8x8, que são as peças de xadrez que
+ * estão atualmente no tabuleiro. O tabuleiro é inicializado com as
+ * peças padrão de um jogo de xadrez.
+ * Podendo ser inicializado com um tabuleiro customizado usando {@code Tabuleiro([][]Peca)}.
+ * </p>
+ *
+ * @author chipskein
+ * @see Peca
+ * @see Posicao
+ * @see Cor
+ */
 public class Tabuleiro implements Cloneable{
     private int linhas=8;
     private int colunas=8;
-    //posições dos reis para facilitar a verificação de xeque
+    /**
+     * Posição do rei preto
+     * para facilitar a verificação de xeque
+    */
     private Posicao reiPretoPosicao=null;
+    /**
+     * Posição do rei branco
+     * para facilitar a verificação de xeque
+    */
     private Posicao reiBrancoPosicao=null;
-    
-    @Override
-    public Tabuleiro clone() {
-        Peca[][] tabuleiroClone = new Peca[linhas][colunas];
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                Peca peca = tabuleiro[i][j];
-                if (peca != null) {
-                    tabuleiroClone[i][j] = peca.clone();
-                } else {
-                    tabuleiroClone[i][j] = null;
-                }
-            }
-        }
-        return new Tabuleiro(tabuleiroClone);
-    }
-    
     /*
-     * tabuleiro é uma matriz de peças
      * as primeiras duas linhas(0-1) são as peças pretas
      * as últimas duas linhas(6-7) são as peças brancas
-     */
+    */
     private Peca[][] tabuleiro;
 
-    public Posicao getReiPretoPosicao() {
-        return reiPretoPosicao;
-    }
-    public void setReiPretoPosicao(Posicao reiPretoPosicao) {
-        this.reiPretoPosicao = reiPretoPosicao;
-    }
-    
-    public Posicao getReiBrancoPosicao() {
-        return reiBrancoPosicao;
-    }
-    public void setReiBrancoPosicao(Posicao reiBrancoPosicao) {
-        this.reiBrancoPosicao = reiBrancoPosicao;
-    }
     public Tabuleiro(){
         tabuleiro = new Peca[linhas][colunas];
         /*   0 1 2 3  4  5 6 7
@@ -86,14 +78,67 @@ public class Tabuleiro implements Cloneable{
         tabuleiro[7][6] = new Cavalo(Cor.BRANCO, new Posicao(7,6));
         tabuleiro[7][7] = new Torre(Cor.BRANCO, new Posicao(7,7));
     }
-    public Peca[][] getTabuleiro(){
-        return tabuleiro;
-    }
+    
     public Tabuleiro(Peca[][] tabuleiro){
         this.tabuleiro = tabuleiro;
     }
 
+    /**
+     * Método que retorna uma cópia do tabuleiro
+     * Para realizar simulações sem alterar o tabuleiro atual
+     * @return Tabuleiro
+    */
+    @Override
+    public Tabuleiro clone() {
+        Peca[][] tabuleiroClone = new Peca[linhas][colunas];
+        for (int i = 0; i < linhas; i++) {
+            for (int j = 0; j < colunas; j++) {
+                Peca peca = tabuleiro[i][j];
+                if (peca != null) {
+                    tabuleiroClone[i][j] = peca.clone();
+                } else {
+                    tabuleiroClone[i][j] = null;
+                }
+            }
+        }
+        return new Tabuleiro(tabuleiroClone);
+    }
 
+    public Posicao getReiPretoPosicao() {
+        return reiPretoPosicao;
+    }
+
+    public void setReiPretoPosicao(Posicao reiPretoPosicao) {
+        this.reiPretoPosicao = reiPretoPosicao;
+    }
+    
+    public Posicao getReiBrancoPosicao() {
+        return reiBrancoPosicao;
+    }
+
+    public void setReiBrancoPosicao(Posicao reiBrancoPosicao) {
+        this.reiBrancoPosicao = reiBrancoPosicao;
+    }
+ 
+    public Peca[][] getTabuleiro(){
+        return tabuleiro;
+    }
+    
+    public Peca getPeca(Posicao posicao){
+        return tabuleiro[posicao.getLinha()][posicao.getColuna()];
+    }
+    
+    /**
+     * Metodo que verifica se o rei está em xeque
+     * <p>
+     * Verifica se o rei está em xeque, percorrendo o tabuleiro e verificando se alguma peça adversária tem algum movimento válido para a posição do rei
+     * </p>
+     * @param posicaoRei Posição do rei
+     * @param corRei Cor do rei
+     * @return boolean
+     * @see Posicao
+     * @see Cor
+    */
     public boolean verificarSeReiEstaEmXeque(Posicao posicaoRei, Cor corRei) {
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
@@ -109,6 +154,15 @@ public class Tabuleiro implements Cloneable{
         return false;
     }
 
+    /**
+     * Método que calcula os movimentos válidos de uma peça
+     * @param peca Peça que deseja calcular os movimentos válidos
+     * @param tabuleiro Tabuleiro atual
+     * @return List<Posicao>
+     * @see Peca
+     * @see Posicao
+     * @see Tabuleiro
+    */
     public List<Posicao> calcularMovimentosValidos(Peca peca, Tabuleiro tabuleiro) {
         List<Posicao> movimentosValidos = new ArrayList<>();
         for (int i = 0; i < linhas; i++) {
@@ -122,19 +176,26 @@ public class Tabuleiro implements Cloneable{
         return movimentosValidos;
     }
 
+    /**
+     * Método que verifica se o rei está em xeque mate
+     * <p>
+     * Verifica se o rei do jogador atual está em xeque
+     * Se estiver, verifica se ele pode se mover para alguma posição
+     * Se não puder, verifica se alguma peça pode capturar a peça que está dando xeque
+     * Se nenhuma peça puder capturar a peça que está dando xeque, é xeque mate
+     * </p>
+     * @param corJogadorAtual Cor do jogador atual
+     * @return boolean
+     * @see Cor
+    */
     public boolean verificarCheckMate(Cor corJogadorAtual){
-        //verifica se o rei do jogador atual está em xeque
-        //se estiver, verifica se ele pode se mover para alguma posição
-        //se não puder, verifica se alguma peça pode capturar a peça que está dando xeque
-        //se nenhuma peça puder capturar a peça que está dando xeque, é xeque mate
+
         Posicao posicaoRei = (corJogadorAtual == Cor.BRANCO) ? reiBrancoPosicao : reiPretoPosicao;
         System.out.println("Cor do Rei "+corJogadorAtual);
         System.out.println("Posição do rei: " + posicaoRei);
-        // Verifique se o rei está em xeque
         if (!verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
             return false;
         }
-        // Simule todos os movimentos possíveis para verificar se é possível sair do xeque
         Tabuleiro simulacao;
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
@@ -160,6 +221,12 @@ public class Tabuleiro implements Cloneable{
         return true;
     }
 
+    /**
+     * Método que promove um peão para uma peça de outro tipo
+     * @param peaoPos Posição do peão
+     * @param tipo Tipo da peça que o peão será promovido (QUEEN, TOWER, HORSE, BISHOP)
+     * @return void
+    */
     public void promoverPeao(Posicao peaoPos,String tipo){
         Peca peao = tabuleiro[peaoPos.getLinha()][peaoPos.getColuna()];
         Peca novaPeca = null;
@@ -176,10 +243,17 @@ public class Tabuleiro implements Cloneable{
             case "BISHOP":
                 novaPeca = new Bispo(peao.getCor(),peao.getPosicao());
                 break;
+            default:
+                return;
         }
         tabuleiro[peao.getPosicao().getLinha()][peao.getPosicao().getColuna()] = novaPeca;
     }
     
+    /**
+     * Método que retorna uma string representando o tabuleiro
+     * Para facilitar a visualização do tabuleiro no console
+     * @return String
+    */
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
@@ -203,7 +277,5 @@ public class Tabuleiro implements Cloneable{
         return s.toString();
     }
     
-    public Peca getPeca(Posicao posicao){
-        return tabuleiro[posicao.getLinha()][posicao.getColuna()];
-    }
+    
 }
