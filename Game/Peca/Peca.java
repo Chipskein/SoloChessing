@@ -3,11 +3,31 @@ package Game.Peca;
 import Game.Posicao;
 import Game.Tabuleiro;
 import Game.Cor;
+/**
+ * Classe abstrata que representa uma peça de xadrez.
+ * @param cor Cor da peça
+ * @param posicao Posição da peça no tabuleiro
+ * @param spritePath Caminho do sprite da peça
+ * @param capturada Indica se a peça foi capturada
+ * @method movimentoValido Verifica se um movimento é válido
+ * @method verificarTrajetoriaDiagonal Verifica se a trajetória de um movimento diagonal é válida
+ * @method verificarTrajetoriaRetilinea Verifica se a trajetória de um movimento retilíneo é válida
+ * @method movimentar Move a peça para uma nova posição
+ * @method getCor Retorna a cor da peça
+ * @method getPosicao Retorna a posição da peça
+ * @method getSpritePath Retorna o caminho do sprite da peça
+ * @method clone Cria uma cópia da peça
+ * @author chipskein
+ */
 public abstract class Peca implements Cloneable{
     protected Cor cor;
+
     protected Posicao posicao;
+
     protected String spritePath;
+
     protected boolean capturada = false;
+
     public Peca(Cor cor, Posicao posicao) {
         this.cor = cor;
         this.posicao = posicao;
@@ -16,18 +36,24 @@ public abstract class Peca implements Cloneable{
     @Override
     public Peca clone() {
         try {
-            // Cria uma cópia superficial da peça
             Peca clone = (Peca) super.clone();
-            // Se a posição ou cor forem objetos mutáveis, clone-os
             clone.posicao = new Posicao(this.posicao.getLinha(), this.posicao.getColuna());
-            // Não é necessário clonar 'cor' se for um valor simples (não mutável)
             return clone;
         } catch (CloneNotSupportedException e) {
+            System.out.println("Cloning not allowed. This should never happen.");
             e.printStackTrace();
-            return null; // Em caso de falha
+            return null;
         }
     }
   
+    /**
+     * Verifica se um movimento é válido para a peça
+     * É implementado pelas classes filhas de acordo com o movimento da peça
+     * Porém, a classe Peca já implementa a verificação de limites do tabuleiro e se a posição de destino é a mesma da peça
+     * @param destino
+     * @param tabuleiro
+     * @return true se o movimento é válido, false caso contrário
+     */
     public boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro){
         // Verifica se a posição esta dentro do tabuleiro
         if (destino.getLinha() < 0 || destino.getLinha() > 7 || destino.getColuna() < 0 || destino.getColuna() > 7){
@@ -40,6 +66,13 @@ public abstract class Peca implements Cloneable{
         return true;
     };
     
+    /**
+     * Verifica se a trajetória de um movimento diagonal é válida
+     * Utilizado por peças que se movem em diagonal (Bispo e Rainha)
+     * @param destino
+     * @param tabuleiro
+     * @return true se a trajetória é válida, false caso contrário
+     */
     public boolean verificarTrajetoriaDiagonal(Posicao destino, Tabuleiro tabuleiro){
         // Verifica se o movimento é na diagonal
         if (Math.abs(destino.getLinha() - this.posicao.getLinha()) != Math.abs(destino.getColuna() - this.posicao.getColuna())) {
@@ -69,6 +102,14 @@ public abstract class Peca implements Cloneable{
         }
         return true;
     }
+    
+    /**
+     * Verifica se a trajetória de um movimento retilíneo é válida
+     * Utilizado por peças que se movem em linha reta (Torre e Rainha)
+     * @param destino
+     * @param tabuleiro
+     * @return
+     */
     public boolean verificarTrajetoriaRetilinea(Posicao destino, Tabuleiro tabuleiro){
         // Verifica se o movimento é na diagonal
         if (Math.abs(destino.getLinha() - this.posicao.getLinha()) == Math.abs(destino.getColuna() - this.posicao.getColuna())) {
@@ -101,18 +142,24 @@ public abstract class Peca implements Cloneable{
         return true;
     }
 
+    /**
+     * Move a peça para uma nova posição
+     * Devem ser feitas as verificações de movimento antes de chamar este método
+     * Caso a posição de destino contenha uma peça adversária, a peça é capturada
+     * Caso a peça movida seja um rei, atualiza a posição do rei no tabuleiro
+     * @param destino
+     * @param tabuleiro
+     */
     public void movimentar(Posicao destino, Tabuleiro tabuleiro){
-        var dest=tabuleiro.getTabuleiro()[destino.getLinha()][destino.getColuna()];
-        if(dest!=null){
-            dest.capturada=true;
-        }
+        Peca dest=tabuleiro.getTabuleiro()[destino.getLinha()][destino.getColuna()];
+        if(dest!=null) dest.capturada=true;
         tabuleiro.getTabuleiro()[destino.getLinha()][destino.getColuna()]=this;
         tabuleiro.getTabuleiro()[this.posicao.getLinha()][this.posicao.getColuna()]=null;
-        // Atualiza a posição do rei caso a peça movida seja um rei
         if(this.posicao.equals(tabuleiro.getReiBrancoPosicao())) tabuleiro.setReiBrancoPosicao(destino);
         if(this.posicao.equals(tabuleiro.getReiPretoPosicao())) tabuleiro.setReiPretoPosicao(destino);
         this.posicao=destino;
     }
+    
     public Cor getCor(){
         return cor;
     };    

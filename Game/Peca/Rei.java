@@ -2,43 +2,48 @@ package Game.Peca;
 import Game.Posicao;
 import Game.Tabuleiro;
 import Game.Cor;
+/**
+ * Classe que representa um rei de xadrez.
+ * @param cor Cor da peça
+ * @param posicao Posição da peça no tabuleiro
+ * @author chipskein
+ */
 public class Rei extends Peca {
     public Rei(Cor cor, Posicao posicao) {
         super(cor, posicao);
         this.spritePath = cor==Cor.BRANCO ? "/Resources/sprites/W_KING.png": "/Resources/sprites/B_KING.png";
     }
+    /**
+     * Verifica se um movimento é válido para o rei
+     * O rei se move apenas uma casa em qualquer direção
+     * @param destino Posição de destino
+     * @param tabuleiro Tabuleiro do jogo
+     * @return true se o movimento é válido, false caso contrário
+     */
     @Override
     public boolean movimentoValido(Posicao destino, Tabuleiro tabuleiro) {
-        if (!super.movimentoValido(destino, tabuleiro)) {
-            return false;
-        }
+        // Verifica se a posição esta dentro do tabuleiro
+        if (!super.movimentoValido(destino, tabuleiro)) return false;
+        
+        // Verifica se o Rei esta se movendo mais de uma casa
         int deltaX = Math.abs(this.posicao.getLinha() - destino.getLinha());
         int deltaY = Math.abs(this.posicao.getColuna() - destino.getColuna());
-
-        // O rei se move apenas uma casa em qualquer direção
         if (deltaX > 1 || deltaY > 1) {
             return false;
         }
-        // Verifica se o destino está vazio ou contém uma peça adversária
-        Peca pecaDestino = tabuleiro.getPeca(destino);
-        if (pecaDestino != null && pecaDestino.getCor() == this.getCor()) {
-            return false;
-        }
         
-        // Verifica se o rei está em xeque ao se mover
-        if (tabuleiro.verificarSeReiEstaEmXeque(destino, this.getCor())) {
-            return false;
-        }        
-
+        // Verifica se o destino tem uma peça da mesma cor
+        Peca pecaDestino = tabuleiro.getPeca(destino);
+        if (pecaDestino != null && pecaDestino.getCor() == this.getCor()) return false;
+        
+        //Verifica se Rei fica em xeque?
+        if (tabuleiro.verificarSeReiEstaEmXeque(destino, this.getCor())) return false;
+        
         return true;
     }
 	
     @Override
     public String toString(){
-        if (cor == Cor.BRANCO){
-            return "BR";
-        }else{
-            return "PR";
-        }
+        return cor == Cor.BRANCO ? "BR" : "PR";
     }
 }
