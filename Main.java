@@ -150,11 +150,7 @@ public class Main extends JPanel {
             openImageSelectionDialog(frame);
         }
         this.t=TURN_DURATION_SECONDS;
-        try{
-            partida.mudarTurno();
-        } catch (CloneNotSupportedException ex){
-            System.out.println("Erro ao mudar turno: "+ex.getMessage());
-        }
+        partida.mudarTurno();
         currentPlayer=partida.getJogadorAtual().getCor();
         
         updateCurrentPlayerLabel();

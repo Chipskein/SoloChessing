@@ -1,4 +1,15 @@
 package Game;
+/**
+ * Posicao é a classe que representa uma posição no tabuleiro.
+ * <p>
+ * A classe {@code Posicao} representa uma posição no tabuleiro de xadrez.
+ * Ela contém dois inteiros, que são a linha e a coluna da posição.
+ * </p>
+ * @see Tabuleiro
+ * @see Peca
+ * @see Cor
+ * @author chipskein
+ */
 public class Posicao{
     private int linha;
     private int coluna;
