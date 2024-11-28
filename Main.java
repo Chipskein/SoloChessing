@@ -34,9 +34,7 @@ public class Main extends JPanel {
     private Image[][] pieceImages;
     private Cor currentPlayer = Cor.BRANCO;
     private Posicao promotedPiecePos = null;
-    private Point selectedTile = null;
     private Point selectedPieceTile = null;
-    private Point selectedMovePieceTile = null;
     private JLabel currentPlayerLabel;
     private Clip boardSound;
     private Color highlightColor = new Color(8, 200, 0, 128);
@@ -96,18 +94,15 @@ public class Main extends JPanel {
                 int col = e.getX() / TILE_SIZE;
                 int row = e.getY() / TILE_SIZE;
                 if (col >= 0 && col < BOARD_SIZE && row >= 0 && row < BOARD_SIZE) {
-                    selectedTile = new Point(col, row);
                     Peca piece = tabuleiro.getTabuleiro()[row][col];
                     if (piece != null && piece.getCor().equals(currentPlayer)) {
                         System.out.println("Selected piece at (" + row + ", " + col + "): " + piece);
                         selectedPieceTile = new Point(col, row);
-                        selectedTile=null;
                     }  else if (selectedPieceTile != null) {
-                        selectedMovePieceTile = new Point(col, row);
                         System.out.println("Selected move at (" + row + ", " + col + ")");
                         var peca=tabuleiro.getPeca(new Posicao(selectedPieceTile.y, selectedPieceTile.x));
                         if(peca.movimentoValido(new Posicao(row, col), tabuleiro)){
-                            // Does not work on my machine for some reason
+                            //INVESTIGAR:Não funciona em alguns Computadores
                             if (boardSound != null && boardSound.isOpen()) {
                                 if (boardSound.isRunning()) {
                                     boardSound.stop();
@@ -127,15 +122,11 @@ public class Main extends JPanel {
                                 }
                             }
                             selectedPieceTile = null;
-                            selectedMovePieceTile = null;
                             loadPieceImages();
-                            //re-use this
                             atualizar();
                         }
                     } else{
-                        selectedTile = null;
                         selectedPieceTile = null;
-                        selectedMovePieceTile = null;
                     }
                     
                 }
@@ -223,7 +214,7 @@ public class Main extends JPanel {
                             System.out.println("Movimento: "+movimento.getLinha() + " "+ movimento.getColuna());
                         }
                         g.setPaintMode();
-                        g.setXORMode(Color.WHITE);//Only way to work on some tiles
+                        g.setXORMode(Color.WHITE);//BUGFIX
                         g.setColor(highlightColor);
                         g.fillRect(movimento.getColuna() * TILE_SIZE, movimento.getLinha() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                         System.out.println("Highlighting tile: (" + movimento.getLinha() + ", " + movimento.getColuna() + ")");
@@ -250,8 +241,8 @@ public class Main extends JPanel {
             Image scaledImage = icon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             ImageIcon scaledIcon = new ImageIcon(scaledImage);
             JButton imageButton = new JButton(scaledIcon);
-            imageButton.setBorder(BorderFactory.createEmptyBorder()); // Optional: Remove border for a cleaner look
-            imageButton.setContentAreaFilled(false); // Optional: Remove background
+            imageButton.setBorder(BorderFactory.createEmptyBorder());
+            imageButton.setContentAreaFilled(false);
             imageButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
