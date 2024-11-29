@@ -7,6 +7,7 @@
 * [X] Implementar Timer para fazer a jogada
 * [X] Implementar Promoção do Peão
 * [X] Adicionar Documentação(JavaDOC nas funções e no header das Classes)
+* [ ] Refatorar Classe Tabuleiro verificação de xeque deveria estar na classe Partida
 * [ ] Revisar Sistema de Xeque-mate(Bugs)
 * [ ] Refatorar Main
 * [ ] Adicionar Mais Testes no MainTestes um conjunto de testes para cada Peça
