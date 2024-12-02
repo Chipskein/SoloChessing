@@ -1,15 +1,13 @@
 package Game;
-import Game.Peca.Peca;
-import Game.Peca.Torre;
+import Game.Peca.Bispo;
 import Game.Peca.Cavalo;
 import Game.Peca.Peao;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import Game.Peca.Bispo;
+import Game.Peca.Peca;
 import Game.Peca.Rainha;
 import Game.Peca.Rei;
+import Game.Peca.Torre;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * Tabuleiro é a classe que representa o tabuleiro de xadrez.
  *
@@ -94,11 +92,7 @@ public class Tabuleiro implements Cloneable{
         for (int i = 0; i < linhas; i++) {
             for (int j = 0; j < colunas; j++) {
                 Peca peca = tabuleiro[i][j];
-                if (peca != null) {
-                    tabuleiroClone[i][j] = peca.clone();
-                } else {
-                    tabuleiroClone[i][j] = null;
-                }
+                tabuleiroClone[i][j] = (peca != null) ? peca.clone() : null;
             }
         }
         return new Tabuleiro(tabuleiroClone);
@@ -127,32 +121,6 @@ public class Tabuleiro implements Cloneable{
     public Peca getPeca(Posicao posicao){
         return tabuleiro[posicao.getLinha()][posicao.getColuna()];
     }
-    
-    /**
-     * Metodo que verifica se o rei está em xeque
-     * <p>
-     * Verifica se o rei está em xeque, percorrendo o tabuleiro e verificando se alguma peça adversária tem algum movimento válido para a posição do rei
-     * </p>
-     * @param posicaoRei Posição do rei
-     * @param corRei Cor do rei
-     * @return boolean
-     * @see Posicao
-     * @see Cor
-    */
-    public boolean verificarSeReiEstaEmXeque(Posicao posicaoRei, Cor corRei) {
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                Peca pecaAdversaria = tabuleiro[i][j];
-                if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
-                    if (pecaAdversaria.movimentoValido(posicaoRei, this)) {
-                        System.out.println("Rei em cheque("+posicaoRei+") "+ pecaAdversaria.getClass()+ "("+pecaAdversaria.getPosicao()+")");
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
     /**
      * Método que calcula os movimentos válidos de uma peça
@@ -174,51 +142,6 @@ public class Tabuleiro implements Cloneable{
             }
         }
         return movimentosValidos;
-    }
-
-    /**
-     * Método que verifica se o rei está em xeque mate
-     * <p>
-     * Verifica se o rei do jogador atual está em xeque
-     * Se estiver, verifica se ele pode se mover para alguma posição
-     * Se não puder, verifica se alguma peça pode capturar a peça que está dando xeque
-     * Se nenhuma peça puder capturar a peça que está dando xeque, é xeque mate
-     * </p>
-     * @param corJogadorAtual Cor do jogador atual
-     * @return boolean
-     * @see Cor
-    */
-    public boolean verificarCheckMate(Cor corJogadorAtual){
-
-        Posicao posicaoRei = (corJogadorAtual == Cor.BRANCO) ? reiBrancoPosicao : reiPretoPosicao;
-        System.out.println("Cor do Rei "+corJogadorAtual);
-        System.out.println("Posição do rei: " + posicaoRei);
-        if (!verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
-            return false;
-        }
-        Tabuleiro simulacao;
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
-                Peca peca = tabuleiro[i][j];
-                simulacao=this.clone();
-                if (peca != null && peca.getCor() == corJogadorAtual) {
-                    List<Posicao> movimentos = calcularMovimentosValidos(peca, simulacao);
-                    for (Posicao movimento : movimentos) {
-                        var previusPosicao = peca.getPosicao();
-                        peca.movimentar(movimento,simulacao);
-                        if (!this.verificarSeReiEstaEmXeque(posicaoRei, corJogadorAtual)) {
-                            System.out.println("Previus pos: "+previusPosicao);
-                            System.out.println("Movimento válido: "+movimento);
-                            System.out.println(simulacao);
-                            simulacao=null;
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
-        simulacao=null;
-        return true;
     }
 
     /**

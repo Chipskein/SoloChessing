@@ -1,7 +1,7 @@
 package Game.Peca;
+import Game.Cor;
 import Game.Posicao;
 import Game.Tabuleiro;
-import Game.Cor;
 /**
  * Classe que representa um rei de xadrez.
  * @param cor Cor da peça
@@ -37,7 +37,7 @@ public class Rei extends Peca {
         if (pecaDestino != null && pecaDestino.getCor() == this.getCor()) return false;
         
         //Verifica se Rei fica em xeque?
-        if (tabuleiro.verificarSeReiEstaEmXeque(destino, this.getCor())) return false;
+        // if (partida.verificarSeReiEstaEmXeque(destino, this.getCor())) return false;
         
         return true;
     }

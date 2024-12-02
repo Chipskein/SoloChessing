@@ -1,14 +1,11 @@
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.net.URL;
-
-
+import java.util.*;
 import Game.Tabuleiro;
 import Game.Peca.Peca;
 import Game.Peca.Peao;
@@ -16,35 +13,34 @@ import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
 
-
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Date;
-import java.util.Calendar;
-/*
-    TODO:REFATORAR ISSO AQUI KKKKKKKK ;p
-*/
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
-    private static final long TURN_DURATION_SECONDS = 120;//5 seconds for testing 120 default
-   
-    private Partida partida;
-    private Tabuleiro tabuleiro;
+    private static final long TURN_DURATION_SECONDS = 120; // Default 120s
+    private static final Color HIGHLIGHT_COLOR = new Color(8, 200, 0, 128);
+    private static final Color MOVE_COLOR = new Color(255, 200, 0, 128);
+
+    private final Partida partida;
+    private final Tabuleiro tabuleiro;
+    private final JLabel currentPlayerLabel;
+    private final JLabel currentTimerLabel;
+    private final JFrame frame;
+
     private Image[][] pieceImages;
-    private Cor currentPlayer = Cor.BRANCO;
-    private Posicao promotedPiecePos = null;
-    private Point selectedPieceTile = null;
-    private JLabel currentPlayerLabel;
     private Clip boardSound;
-    private Color highlightColor = new Color(8, 200, 0, 128);
-    private Color moveColor = new Color(255, 200, 0, 128);
-    private JLabel currentTimerLabel;
-    private JFrame frame;
-    public boolean show=false;
-    private long t=TURN_DURATION_SECONDS;
-    public Main(Partida partida, JLabel currentPlayerLabel,JLabel currentTimerLabel,JFrame frame) {
-        this.frame=frame;
+    private Cor currentPlayer;
+    private Point selectedPieceTile = null;
+    private Posicao promotedPiecePos = null;
+    private boolean show = false;
+    private long t = TURN_DURATION_SECONDS;
+
+    public Main(Partida partida, JLabel currentPlayerLabel, JLabel currentTimerLabel, JFrame frame) {
+        this.partida = partida;
+        this.tabuleiro = partida.getTabuleiro();
+        this.currentPlayerLabel = currentPlayerLabel;
+        this.currentTimerLabel = currentTimerLabel;
+        this.frame = frame;
+        
         //Timer turn
         Timer timer = new Timer();
         long delay_turn_ms = TURN_DURATION_SECONDS*1000; //sec * ms
@@ -80,11 +76,6 @@ public class Main extends JPanel {
         timer2.scheduleAtFixedRate(task2, new Date(), 1000);
 
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
-        this.tabuleiro = partida.getTabuleiro();
-        this.partida = partida;
-        this.currentPlayerLabel = currentPlayerLabel;
-        this.currentTimerLabel=currentTimerLabel;
-        
         updateCurrentPlayerLabel();
         loadPieceImages();
         loadAudio();
@@ -206,7 +197,7 @@ public class Main extends JPanel {
                 g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 
                 if (selectedPieceTile != null && selectedPieceTile.x == col && selectedPieceTile.y == row) {
-                    g.setColor(moveColor);
+                    g.setColor(MOVE_COLOR);
                     g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     var pos=tabuleiro.calcularMovimentosValidos(tabuleiro.getPeca(new Posicao(row, col)), tabuleiro);
                     for (Posicao movimento : pos) {
@@ -215,7 +206,7 @@ public class Main extends JPanel {
                         }
                         g.setPaintMode();
                         g.setXORMode(Color.WHITE);//BUGFIX
-                        g.setColor(highlightColor);
+                        g.setColor(HIGHLIGHT_COLOR);
                         g.fillRect(movimento.getColuna() * TILE_SIZE, movimento.getLinha() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                         System.out.println("Highlighting tile: (" + movimento.getLinha() + ", " + movimento.getColuna() + ")");
                     }
