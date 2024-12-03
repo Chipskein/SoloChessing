@@ -229,11 +229,60 @@ public class MainTestes {
         partida.mudarTurno();
         System.out.println("Fim dos testes de Xeque-Mate " +partida.isFimDeJogo());
 
+
+        //Testes de Xeque-Mate
+        System.out.println("Testes de Escape de Xeque-Mate");
+        partida = new Partida();
+        var pecas=new Peca[8][8];
+        pecas[0][4] = new Rei(Cor.PRETO, new Posicao(0,4));
+        pecas[1][4] = new Peao(Cor.PRETO, new Posicao(1,4));
+        pecas[2][5] = new Cavalo(Cor.BRANCO, new Posicao(2,5));
+        pecas[7][4] = new Rei(Cor.BRANCO, new Posicao(7,4));
+        var tabuleiro = new Tabuleiro(pecas);
+        tabuleiro.setReiBrancoPosicao(new Posicao(7,4));
+        tabuleiro.setReiPretoPosicao(new Posicao(0,4));
+        partida.iniciarJogo(tabuleiro);
+        System.out.println("Tabuleiro inicial");
+        System.out.println(partida.getTabuleiro());
+        System.out.println(tabuleiro.calcularMovimentosValidos(pecas[0][4], tabuleiro));
+        partida.mudarTurno();
+        if(partida.isFimDeJogo()) throw new Exception("Teste Fail");
+        System.out.println("Fim dos testes de Escape de Xeque-Mate ");
+        pecas[1][4].movimentar(new Posicao(2, 4), tabuleiro);
+        System.out.println("Tabuleiro após movimento");
+        System.out.println(partida.getTabuleiro());
+        partida.mudarTurno();
+        if(!partida.isFimDeJogo()) throw new Exception("Teste Fail");
+
+        System.out.println("Testes de Escape de Xeque-Mate");
+        partida = new Partida();
+        pecas=new Peca[8][8];
+        pecas[0][4] = new Rei(Cor.PRETO, new Posicao(0,4));
+        for(int i=0;i<8;i++){
+            pecas[1][i] = new Peao(Cor.PRETO, new Posicao(1,i));
+        }
+        pecas[2][5] = new Cavalo(Cor.BRANCO, new Posicao(2,5));
+        pecas[7][4] = new Rei(Cor.BRANCO, new Posicao(7,4));
+        tabuleiro = new Tabuleiro(pecas);
+        tabuleiro.setReiBrancoPosicao(new Posicao(7,4));
+        tabuleiro.setReiPretoPosicao(new Posicao(0,4));
+        partida.iniciarJogo(tabuleiro);
+        System.out.println("Tabuleiro inicial");
+        System.out.println(partida.getTabuleiro());
+        System.out.println(tabuleiro.calcularMovimentosValidos(pecas[0][4], tabuleiro));
+        partida.mudarTurno();
+        if(partida.isFimDeJogo()) throw new Exception("Teste Fail");
+        pecas[0][4].movimentar(new Posicao(0, 5), tabuleiro);
+        System.out.println("Tabuleiro após movimento");
+        System.out.println(partida.getTabuleiro());
+        partida.mudarTurno();
+        if(partida.isFimDeJogo()) throw new Exception("Teste Fail");
+
         //Testes de Movimentação de peças
         //Peão
         System.out.println("Testes de movimentação de peças");
         System.out.println("Peão");
-        var pecas=new Peca[8][8];
+        pecas=new Peca[8][8];
         for(int i=0;i<8;i++){
             pecas[1][i]=new Peao(Cor.PRETO,new Posicao(1, i));
         }

@@ -8,10 +8,18 @@
 * [X] Implementar Promoção do Peão
 * [X] Adicionar Documentação(JavaDOC nas funções e no header das Classes)
 * [X] Refatorar Classe Tabuleiro verificação de xeque deveria estar na classe Partida
-* [ ] Revisar Sistema de Xeque-mate(Bugs)
+
+* [X] Revisar Sistema de Xeque-mate:
+    * [X] Bug:xeque-mate não ocorria em alguns casos
+    * [X] Bug:caso Jogador em xeque não faça movimento q sai do xeque
+    * [X] Bug:Rei não escapa do xeque a tempo
+
+* [X] Botão de desistência
+* [X] Bug:Timer não reseta highlight
+* [ ] Arrumar README.md
 * [ ] Refatorar Main
 * [ ] Adicionar Mais Testes no MainTestes um conjunto de testes para cada Peça
-* [ ] Arrumar README.md
+
 
 #### Dupla
 * [Bruno Nascimento](https://github.com/Chipskein)

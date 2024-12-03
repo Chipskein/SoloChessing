@@ -1,6 +1,7 @@
 package Game;
 
 import Game.Peca.Peca;
+
 import java.util.List;
 
 /**
@@ -46,13 +47,6 @@ public class Partida {
      */
     private Jogador jogadorAtual;
 
-    /**
-     * Fim de Jogo
-     * <p>
-     * Fim de Jogo é uma variável que indica se a partida acabou.
-     * </p>
-     */
-    private boolean fimDeJogo=false;
 
     /**
      * Iniciar Jogo
@@ -69,6 +63,20 @@ public class Partida {
         jogadorAtual = jogador1;
     }
 
+     /**
+     * Iniciar Jogo com tabuleiro customizado
+     * <p>
+     * Iniciar Jogo é o método que inicia a partida.
+     * @param tabuleiro Tabuleiro customizado
+     * </p>
+     */
+     public void iniciarJogo(Tabuleiro tabuleiro) {
+        jogador1 = new Jogador(Cor.BRANCO);
+        jogador2 = new Jogador(Cor.PRETO);
+        this.tabuleiro = tabuleiro;
+        jogadorAtual = jogador1;
+    }
+
     /**
      * Mudar Turno
      * <p>
@@ -79,8 +87,9 @@ public class Partida {
      */
     public void mudarTurno(){
         jogadorAtual.incrementarMovimentos();
-        if (verificarTurno(jogador1, jogador2) || verificarTurno(jogador2, jogador1)) return;
-        jogadorAtual = jogadorAtual.equals(jogador1) ? jogador2 : jogador1;        
+        //BUGFIX: Bug caso Jogador em xeque não faça movimento q sai do xeque,Checar ambos os jogadores resolve
+        if (verificarTurno(jogador1, jogador2) || verificarTurno(jogador2,jogador1)) return;
+        jogadorAtual = jogadorAtual.equals(jogador1) ? jogador2 : jogador1;
     }
 
     /**
@@ -92,14 +101,15 @@ public class Partida {
     */
     private boolean verificarTurno(Jogador jogadorAtacado,Jogador jogadorAtacando){
         if(verificarCheckMate(jogadorAtacado.getCor())){
-            fimDeJogo = true;
             jogadorAtacando.setVencedor(true);
             System.out.println("Fim de jogo");
             return true;
         };
         return false;
     }
+
     
+
     public Jogador getJogadorAtual(){
         return jogadorAtual;
     }
@@ -135,7 +145,7 @@ public class Partida {
      * @return boolean
      */
     public boolean isFimDeJogo(){
-        return fimDeJogo;
+        return this.getVencedor()!=null;
     }
 
     
@@ -154,18 +164,17 @@ public class Partida {
     */
     public boolean verificarCheckMate(Cor corJogadorAtual) {
         if (!tabuleiro.verificarSeReiEstaEmXeque(corJogadorAtual)) return false;
-        Tabuleiro simulacao;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Peca peca = tabuleiro.getPeca(new Posicao(i, j));
+        //Verifica todos os movimentos possiveis das peças do jogador atual
+        Tabuleiro simulacao=tabuleiro.clone();
+        for (int i = 0; i < simulacao.getLINHAS(); i++) {
+            for (int j = 0; j < simulacao.getCOLUNAS(); j++) {
+                Peca peca = simulacao.getPeca(new Posicao(i, j));
                 if (peca != null && peca.getCor() == corJogadorAtual) {
-                    List<Posicao> movimentos = tabuleiro.calcularMovimentosValidos(peca, tabuleiro.clone());
+                    List<Posicao> movimentos = simulacao.calcularMovimentosValidos(peca, simulacao);
                     for (Posicao movimento : movimentos) {
-                        simulacao = tabuleiro.clone();
                         peca.movimentar(movimento, simulacao);
-                        if (!tabuleiro.verificarSeReiEstaEmXeque(corJogadorAtual)) {
-                            return false;
-                        }
+                        if (!simulacao.verificarSeReiEstaEmXeque(corJogadorAtual)) return false;
+                        simulacao = tabuleiro.clone();
                     }
                 }
             }

@@ -25,8 +25,8 @@ import java.util.List;
  * @see Cor
  */
 public class Tabuleiro implements Cloneable{
-    private int linhas=8;
-    private int colunas=8;
+    private final int LINHAS=8;
+    private final int COLUNAS=8;
     /**
      * Posição do rei preto
      * para facilitar a verificação de xeque
@@ -44,7 +44,7 @@ public class Tabuleiro implements Cloneable{
     private Peca[][] tabuleiro;
 
     public Tabuleiro(){
-        tabuleiro = new Peca[linhas][colunas];
+        tabuleiro = new Peca[LINHAS][COLUNAS];
         /*   0 1 2 3  4  5 6 7
            0 T C B RA R B C T         
            1 P P P P P  P P P
@@ -62,7 +62,7 @@ public class Tabuleiro implements Cloneable{
         tabuleiro[0][5] = new Bispo(Cor.PRETO, new Posicao(0,5));
         tabuleiro[0][6] = new Cavalo(Cor.PRETO, new Posicao(0,6));
         tabuleiro[0][7] = new Torre(Cor.PRETO, new Posicao(0,7));
-        for (int i = 0; i < colunas; i++){
+        for (int i = 0; i < COLUNAS; i++){
             tabuleiro[1][i] = new Peao(Cor.PRETO, new Posicao(1,i));
             tabuleiro[6][i] = new Peao(Cor.BRANCO, new Posicao(6,i));
         }
@@ -88,14 +88,17 @@ public class Tabuleiro implements Cloneable{
     */
     @Override
     public Tabuleiro clone() {
-        Peca[][] tabuleiroClone = new Peca[linhas][colunas];
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
+        Peca[][] tabuleiroClone = new Peca[LINHAS][COLUNAS];
+        for (int i = 0; i < LINHAS; i++) {
+            for (int j = 0; j < COLUNAS; j++) {
                 Peca peca = tabuleiro[i][j];
                 tabuleiroClone[i][j] = (peca != null) ? peca.clone() : null;
             }
         }
-        return new Tabuleiro(tabuleiroClone);
+        var t=new Tabuleiro(tabuleiroClone);
+        t.setReiPretoPosicao(new Posicao(reiPretoPosicao.getLinha(),reiPretoPosicao.getColuna()));
+        t.setReiBrancoPosicao(new Posicao(reiBrancoPosicao.getLinha(),reiBrancoPosicao.getColuna()));
+        return t;
     }
 
     public Posicao getReiPretoPosicao() {
@@ -122,6 +125,14 @@ public class Tabuleiro implements Cloneable{
         return tabuleiro[posicao.getLinha()][posicao.getColuna()];
     }
 
+    public int getLINHAS(){
+        return LINHAS;
+    }
+
+    public int getCOLUNAS(){
+        return COLUNAS;
+    }
+
     /**
      * Método que calcula os movimentos válidos de uma peça
      * @param peca Peça que deseja calcular os movimentos válidos
@@ -133,8 +144,8 @@ public class Tabuleiro implements Cloneable{
     */
     public List<Posicao> calcularMovimentosValidos(Peca peca, Tabuleiro tabuleiro) {
         List<Posicao> movimentosValidos = new ArrayList<>();
-        for (int i = 0; i < linhas; i++) {
-            for (int j = 0; j < colunas; j++) {
+        for (int i = 0; i < LINHAS; i++) {
+            for (int j = 0; j < COLUNAS; j++) {
                 Posicao destino = new Posicao(i, j);
                 if (peca.movimentoValido(destino, tabuleiro)) {
                     movimentosValidos.add(destino);
@@ -187,8 +198,8 @@ public class Tabuleiro implements Cloneable{
     */
     
     public boolean verificarSeReiEstaEmXeque(Posicao posicaoRei,Cor corRei) {
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < LINHAS; i++) {
+            for (int j = 0; j < COLUNAS; j++) {
                 Peca pecaAdversaria = this.getPeca(new Posicao(i, j));
                 if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
                     if (pecaAdversaria.movimentoValido(posicaoRei, this)) {
@@ -214,17 +225,17 @@ public class Tabuleiro implements Cloneable{
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("   ");
-        for (int j = 0; j < colunas; j++) {
+        for (int j = 0; j < COLUNAS; j++) {
             s.append(j).append("   ");
         }
         s.append("\n");
-        for (int i = 0; i < linhas; i++) {
+        for (int i = 0; i < LINHAS; i++) {
             s.append(i).append(" | ");
-            for (int j = 0; j < colunas; j++) {
+            for (int j = 0; j < COLUNAS; j++) {
                 if (tabuleiro[i][j] == null) {
-                    s.append("   |"); // Empty space
+                    s.append("   |");
                 } else {
-                    s.append(tabuleiro[i][j].toString()).append(" |"); // Piece representation
+                    s.append(tabuleiro[i][j].toString()).append(" |");
                 }
             }
     

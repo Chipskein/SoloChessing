@@ -8,6 +8,7 @@ import java.net.URL;
 import java.util.*;
 import Game.Tabuleiro;
 import Game.Peca.Peca;
+import Game.Peca.Rei;
 import Game.Peca.Peao;
 import Game.Cor;
 import Game.Partida;
@@ -19,7 +20,7 @@ import java.util.Timer;
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
-    private static final long TURN_DURATION_SECONDS = 120; // Default 120s
+    private static final long TURN_DURATION_SECONDS = 20; // Default 120s
     private static final Color HIGHLIGHT_COLOR = new Color(8, 200, 0, 128);
     private static final Color MOVE_COLOR = new Color(255, 200, 0, 128);
 
@@ -37,46 +38,26 @@ public class Main extends JPanel {
     private boolean show = false;
     private long t = TURN_DURATION_SECONDS;
 
-    public Main(Partida partida, JLabel currentPlayerLabel, JLabel currentTimerLabel, JFrame frame) {
+    public Main(Partida partida, JLabel currentPlayerLabel, JLabel currentTimerLabel, JButton surrenderButton,JFrame frame) {
         this.partida = partida;
         this.tabuleiro = partida.getTabuleiro();
         this.currentPlayerLabel = currentPlayerLabel;
         this.currentTimerLabel = currentTimerLabel;
         this.frame = frame;
         
-        //Timer turn
         Timer timer = new Timer();
-        long delay_turn_ms = TURN_DURATION_SECONDS*1000; //sec * ms
-        var c=Calendar.getInstance();
-        c.setTime(new Date());
-        c.add(Calendar.SECOND,(int)TURN_DURATION_SECONDS);
-        Date now=c.getTime();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Time is up!");
-                try{
-                    atualizar();
-                }
-                catch(Exception e){
-                    System.out.println(e.getMessage());
-                }
-                
-            }
-        };
-        timer.scheduleAtFixedRate(task, now, delay_turn_ms);
-        //Timer Update time lavel
-        Timer timer2 = new Timer();
-        TimerTask task2 = new TimerTask() {
-            @Override
-            public void run() {
-                if(t>0){
+                if(!show&&t>0){
                     t--;
                     updateCurrentTimerLabel();
+                } else if (t==0){
+                    atualizar();
                 }
             }
         };
-        timer2.scheduleAtFixedRate(task2, new Date(), 1000);
+        timer.scheduleAtFixedRate(task, new Date(), 1000);
 
         setPreferredSize(new Dimension(BOARD_SIZE * TILE_SIZE, BOARD_SIZE * TILE_SIZE));
         updateCurrentPlayerLabel();
@@ -127,22 +108,34 @@ public class Main extends JPanel {
                 repaint();
             }
         });
+
+        surrenderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Cor vencedor = currentPlayer == Cor.BRANCO ? Cor.PRETO : Cor.BRANCO;
+                JOptionPane.showMessageDialog(frame, 
+                    "O jogador " + (vencedor == Cor.BRANCO ? "Branco" : "Preto") + " venceu por desistência!", 
+                    "Fim de Jogo", 
+                    JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
+            }
+        });
     }
 
     
     private void atualizar(){
-        if (show) {
-            openImageSelectionDialog(frame);
-        }
+        if (show) openImageSelectionDialog(frame);
+        selectedPieceTile = null;
+        promotedPiecePos = null;
         this.t=TURN_DURATION_SECONDS;
         partida.mudarTurno();
         currentPlayer=partida.getJogadorAtual().getCor();
-        
         updateCurrentPlayerLabel();
         if (partida.isFimDeJogo()) {
             JOptionPane.showMessageDialog(Main.this, "Fim de Jogo! " + partida.getVencedor().getCor() + " venceu! com "+ partida.getVencedor().getMovimentos()+" movimentos", "Fim de Jogo", JOptionPane.INFORMATION_MESSAGE);
             System.exit(0);
         }
+        repaint(); 
     }
     
     private void updateCurrentPlayerLabel() {
@@ -204,14 +197,20 @@ public class Main extends JPanel {
                     g.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     var pos=tabuleiro.calcularMovimentosValidos(tabuleiro.getPeca(new Posicao(row, col)), tabuleiro);
                     for (Posicao movimento : pos) {
-                        if(currentPlayer==Cor.PRETO){
-                            System.out.println("Movimento: "+movimento.getLinha() + " "+ movimento.getColuna());
-                        }
                         g.setPaintMode();
-                        g.setXORMode(Color.WHITE);//BUGFIX
+                        g.setXORMode(Color.WHITE);//BUGFIX:Highlighting tiles
                         g.setColor(HIGHLIGHT_COLOR);
                         g.fillRect(movimento.getColuna() * TILE_SIZE, movimento.getLinha() * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                         System.out.println("Highlighting tile: (" + movimento.getLinha() + ", " + movimento.getColuna() + ")");
+                        
+                        //BUGFIX:Rei adversario em xeque-mate por não ter turno para se mover devido ao timer
+                        var pecaInPos=tabuleiro.getPeca(movimento);
+                        if(pecaInPos!=null&&pecaInPos.getClass()==Rei.class){
+                            System.out.println("Rei adversario em xeque-mate por não ter turno para se mover!");
+                            partida.getJogadorAtual().setVencedor(true);
+                            partida.mudarTurno();
+                        }
+                        //
                     }
                 }
 
@@ -220,7 +219,6 @@ public class Main extends JPanel {
                 }
             }
         }
-        
         
     }
     
@@ -265,18 +263,27 @@ public class Main extends JPanel {
         partida.iniciarJogo();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
+        
+        JButton surrenderButton = new JButton("Desistir");
+        surrenderButton.setFont(new Font("Arial", Font.BOLD, 16));
+        surrenderButton.setFocusable(false);
+        
         JLabel currentPlayerLabel = new JLabel("Jogador Atual: Branco");
         currentPlayerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         currentPlayerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
         JLabel currentTimerLabel = new JLabel("Timer: "+TURN_DURATION_SECONDS);
         currentTimerLabel.setFont(new Font("Arial", Font.BOLD, 16));
         currentTimerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BorderLayout());
         sidebar.setPreferredSize(new Dimension(200, BOARD_SIZE * TILE_SIZE));
         sidebar.add(currentPlayerLabel, BorderLayout.CENTER);
         sidebar.add(currentTimerLabel, BorderLayout.PAGE_END);
-        Main boardPanel = new Main(partida,currentPlayerLabel,currentTimerLabel,frame);
+        sidebar.add(surrenderButton, BorderLayout.PAGE_START);
+
+        Main boardPanel = new Main(partida,currentPlayerLabel,currentTimerLabel,surrenderButton,frame);
         frame.add(boardPanel, BorderLayout.CENTER);
         frame.add(sidebar, BorderLayout.EAST);
         frame.addKeyListener(new KeyAdapter() {
