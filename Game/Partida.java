@@ -78,28 +78,27 @@ public class Partida {
      * </p>
      */
     public void mudarTurno(){
-        //TODO:REFACTOR?
         jogadorAtual.incrementarMovimentos();
-        if(this.verificarCheckMate(jogador1.getCor())){
-            fimDeJogo = true;
-            jogador2.setVencedor(true);
-            System.out.println("Fim de jogo");
-            return;
-        };
-        if(this.verificarCheckMate(jogador2.getCor())){
-            fimDeJogo = true;
-            jogador1.setVencedor(true);
-            System.out.println("Fim de jogo");
-            return;
-        };
-        if(jogadorAtual.equals(jogador1)){
-            jogadorAtual = jogador2;
-        } else{
-            jogadorAtual = jogador1;
-        }
-
+        if (verificarTurno(jogador1, jogador2) || verificarTurno(jogador2, jogador1)) return;
+        jogadorAtual = jogadorAtual.equals(jogador1) ? jogador2 : jogador1;        
     }
-    
+
+    /**
+     * Verifica se o turno termina o jogo,caso tenha ocorrido um checkmate
+     *
+     * @param jogadorAtacado O jogador cuja cor será verificada.
+     * @param jogadorVencedor O jogador que será marcado como vencedor em caso de checkmate.
+     * @return true se o jogo terminou, false caso contrário.
+    */
+    private boolean verificarTurno(Jogador jogadorAtacado,Jogador jogadorAtacando){
+        if(verificarCheckMate(jogadorAtacado.getCor())){
+            fimDeJogo = true;
+            jogadorAtacando.setVencedor(true);
+            System.out.println("Fim de jogo");
+            return true;
+        };
+        return false;
+    }
     
     public Jogador getJogadorAtual(){
         return jogadorAtual;

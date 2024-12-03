@@ -147,23 +147,24 @@ public class Tabuleiro implements Cloneable{
     /**
      * Método que promove um peão para uma peça de outro tipo
      * @param peaoPos Posição do peão
-     * @param tipo Tipo da peça que o peão será promovido (QUEEN, TOWER, HORSE, BISHOP)
+     * @param tipo Tipo da peça que o peão será promovido (RAINHA, TORRE, BISPO, CAVALO)
+     * @see PromocaoPeaoTipo
      * @return void
     */
-    public void promoverPeao(Posicao peaoPos,String tipo){
+    public void promoverPeao(Posicao peaoPos,PromocaoPeaoTipo tipo){
         Peca peao = tabuleiro[peaoPos.getLinha()][peaoPos.getColuna()];
         Peca novaPeca = null;
         switch (tipo){
-            case "QUEEN":
+            case RAINHA:
                 novaPeca = new Rainha(peao.getCor(),peao.getPosicao());
                 break;
-            case "TOWER":
+            case TORRE:
                 novaPeca = new Torre(peao.getCor(),peao.getPosicao());
                 break;
-            case "HORSE":
+            case CAVALO:
                 novaPeca = new Cavalo(peao.getCor(),peao.getPosicao());
                 break;
-            case "BISHOP":
+            case BISPO:
                 novaPeca = new Bispo(peao.getCor(),peao.getPosicao());
                 break;
             default:

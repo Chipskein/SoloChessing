@@ -12,6 +12,8 @@ import Game.Peca.Peao;
 import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
+import Game.PromocaoPeaoTipo;
+
 import java.util.Timer;
 
 public class Main extends JPanel {
@@ -241,7 +243,7 @@ public class Main extends JPanel {
                     System.out.println("Selected image: " + imagePath);
                     if(promotedPiecePos!=null){
                         String extractedPart = imagePath.substring("Resources/sprites/".length(), imagePath.indexOf(".")).split("_")[1];
-                        tabuleiro.promoverPeao(promotedPiecePos, extractedPart);
+                        tabuleiro.promoverPeao(promotedPiecePos, PromocaoPeaoTipo.fromString(extractedPart));
                     }
                     show=false;
                     loadPieceImages();
