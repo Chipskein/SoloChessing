@@ -12,6 +12,7 @@ import Game.Peca.Peao;
 import Game.Cor;
 import Game.Partida;
 import Game.Posicao;
+import java.util.Timer;
 
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
@@ -28,7 +29,7 @@ public class Main extends JPanel {
 
     private Image[][] pieceImages;
     private Clip boardSound;
-    private Cor currentPlayer;
+    private Cor currentPlayer=Cor.BRANCO;
     private Point selectedPieceTile = null;
     private Posicao promotedPiecePos = null;
     private boolean show = false;

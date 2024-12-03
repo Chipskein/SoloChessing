@@ -171,6 +171,38 @@ public class Tabuleiro implements Cloneable{
         }
         tabuleiro[peao.getPosicao().getLinha()][peao.getPosicao().getColuna()] = novaPeca;
     }
+
+
+    /**
+     * Metodo que verifica se o rei está em xeque
+     * <p>
+     * Verifica se o rei está em xeque, percorrendo o tabuleiro e verificando se alguma peça adversária tem algum movimento válido para a posição do rei
+     * </p>
+     * @param posicaoRei Posição do rei
+     * @param corRei Cor do rei
+     * @return boolean
+     * @see Posicao
+     * @see Cor
+    */
+    
+    public boolean verificarSeReiEstaEmXeque(Posicao posicaoRei,Cor corRei) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Peca pecaAdversaria = this.getPeca(new Posicao(i, j));
+                if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
+                    if (pecaAdversaria.movimentoValido(posicaoRei, this)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean verificarSeReiEstaEmXeque(Cor corRei) {
+        Posicao posicaoRei = (corRei == Cor.BRANCO) ? this.getReiBrancoPosicao() : this.getReiPretoPosicao();
+        return verificarSeReiEstaEmXeque(posicaoRei,corRei);
+    }
     
     /**
      * Método que retorna uma string representando o tabuleiro

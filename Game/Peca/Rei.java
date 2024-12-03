@@ -37,7 +37,7 @@ public class Rei extends Peca {
         if (pecaDestino != null && pecaDestino.getCor() == this.getCor()) return false;
         
         //Verifica se Rei fica em xeque?
-        // if (partida.verificarSeReiEstaEmXeque(destino, this.getCor())) return false;
+        if (tabuleiro.verificarSeReiEstaEmXeque(destino, this.getCor())) return false;
         
         return true;
     }

@@ -139,31 +139,7 @@ public class Partida {
         return fimDeJogo;
     }
 
-    /**
-     * Metodo que verifica se o rei está em xeque
-     * <p>
-     * Verifica se o rei está em xeque, percorrendo o tabuleiro e verificando se alguma peça adversária tem algum movimento válido para a posição do rei
-     * </p>
-     * @param posicaoRei Posição do rei
-     * @param corRei Cor do rei
-     * @return boolean
-     * @see Posicao
-     * @see Cor
-    */
-    public boolean verificarSeReiEstaEmXeque(Cor corRei) {
-        Posicao posicaoRei = (corRei == Cor.BRANCO) ? tabuleiro.getReiBrancoPosicao() : tabuleiro.getReiPretoPosicao();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Peca pecaAdversaria = tabuleiro.getPeca(new Posicao(i, j));
-                if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
-                    if (pecaAdversaria.movimentoValido(posicaoRei, tabuleiro)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+    
 
     /**
      * Método que verifica se o rei está em xeque mate
@@ -178,12 +154,7 @@ public class Partida {
      * @see Cor
     */
     public boolean verificarCheckMate(Cor corJogadorAtual) {
-        if (!verificarSeReiEstaEmXeque(corJogadorAtual)) {
-            return false;
-        }
-
-        Posicao posicaoRei = (corJogadorAtual == Cor.BRANCO) ? tabuleiro.getReiBrancoPosicao() : tabuleiro.getReiPretoPosicao();
-
+        if (!tabuleiro.verificarSeReiEstaEmXeque(corJogadorAtual)) return false;
         Tabuleiro simulacao;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -193,7 +164,7 @@ public class Partida {
                     for (Posicao movimento : movimentos) {
                         simulacao = tabuleiro.clone();
                         peca.movimentar(movimento, simulacao);
-                        if (!verificarSeReiEstaEmXeque(corJogadorAtual)) {
+                        if (!tabuleiro.verificarSeReiEstaEmXeque(corJogadorAtual)) {
                             return false;
                         }
                     }
