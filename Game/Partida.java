@@ -1,6 +1,11 @@
 package Game;
 
+import Game.Peca.Bispo;
+import Game.Peca.Cavalo;
 import Game.Peca.Peca;
+import Game.Peca.Rainha;
+import Game.Peca.Rei;
+import Game.Peca.Torre;
 
 import java.util.List;
 
@@ -171,14 +176,65 @@ public class Partida {
                 Peca peca = simulacao.getPeca(new Posicao(i, j));
                 if (peca != null && peca.getCor() == corJogadorAtual) {
                     List<Posicao> movimentos = simulacao.calcularMovimentosValidos(peca, simulacao);
+                    System.out.println(peca.toString() + " " + movimentos);
+                    System.out.println(peca.getPosicao() + " " + movimentos);
+                    var posicaoBase=new Posicao(peca.getPosicao().getLinha(),peca.getPosicao().getColuna());
                     for (Posicao movimento : movimentos) {
+                        var pecaNaPosDestino = simulacao.getPeca(movimento);
                         peca.movimentar(movimento, simulacao);
                         if (!simulacao.verificarSeReiEstaEmXeque(corJogadorAtual)) return false;
+                        
+                        //Reverte movimento
+                        peca.setPosicao(posicaoBase);
+                        if(peca.getClass()==Rei.class){
+                            System.out.println("Rei");
+                            if (corJogadorAtual==Cor.BRANCO) simulacao.setReiBrancoPosicao(posicaoBase);
+                            else simulacao.setReiPretoPosicao(posicaoBase);
+                        }
+
+                        if(pecaNaPosDestino!=null){
+                            simulacao.getTabuleiro()[movimento.getLinha()][movimento.getColuna()]=pecaNaPosDestino;
+                            if (peca.isCapturada()){
+                                pecaNaPosDestino.setCapturada(false);
+                            }
+                        }
+
                         simulacao = tabuleiro.clone();
+                        
                     }
                 }
+                
             }
         }
         return true;
+    }
+
+       /**
+     * Método que promove um peão para uma peça de outro tipo
+     * @param peaoPos Posição do peão
+     * @param tipo Tipo da peça que o peão será promovido (RAINHA, TORRE, BISPO, CAVALO)
+     * @see PromocaoPeaoTipo
+     * @return void
+    */
+    public void promoverPeao(Posicao peaoPos,PromocaoPeaoTipo tipo){
+        Peca peao = tabuleiro.getTabuleiro()[peaoPos.getLinha()][peaoPos.getColuna()];
+        Peca novaPeca = null;
+        switch (tipo){
+            case RAINHA:
+                novaPeca = new Rainha(peao.getCor(),peao.getPosicao());
+                break;
+            case TORRE:
+                novaPeca = new Torre(peao.getCor(),peao.getPosicao());
+                break;
+            case CAVALO:
+                novaPeca = new Cavalo(peao.getCor(),peao.getPosicao());
+                break;
+            case BISPO:
+                novaPeca = new Bispo(peao.getCor(),peao.getPosicao());
+                break;
+            default:
+                return;
+        }
+        tabuleiro.getTabuleiro()[peao.getPosicao().getLinha()][peao.getPosicao().getColuna()] = novaPeca;
     }
 }

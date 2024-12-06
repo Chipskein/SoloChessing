@@ -27,6 +27,22 @@ public  class Bispo extends Peca {
         return super.verificarTrajetoriaDiagonal(destino, tabuleiro);
     }
 
+     /**
+     * Move a peça para uma nova posição
+     * Devem ser feitas as verificações de movimento antes de chamar este método
+     * @param destino
+     * @param tabuleiro
+     */
+    @Override
+    public void movimentar(Posicao destino, Tabuleiro tabuleiro){
+        if(!this.movimentoValido(destino, tabuleiro)){
+            throw new IllegalStateException("Movimento inválido, verifique se o movimento é válido antes de chamar o método movimentar"+ " "+toString()+" "+this.posicao+" "+destino);
+        }
+        super.movimentar(destino, tabuleiro);
+    }
+
+    
+
     @Override
     public String toString(){
         return cor == Cor.BRANCO ? "BB" : "PB";

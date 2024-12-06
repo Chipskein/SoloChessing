@@ -13,6 +13,7 @@
     * [X] Bug:xeque-mate não ocorria em alguns casos
     * [X] Bug:caso Jogador em xeque não faça movimento q sai do xeque
     * [X] Bug:Rei não escapa do xeque a tempo
+    * [X] Bug:calcularMovimentosValidos não levava em consioderação o rei em xeque
 
 * [X] Botão de desistência
 * [X] Bug:Timer não reseta highlight

@@ -60,7 +60,7 @@ public abstract class Peca implements Cloneable{
             return false;
         }
         // Verifica se a posição de destino é a mesma da peça
-        if (posicao.equals(destino)){
+        if (posicao.getColuna()==destino.getColuna()&&posicao.getLinha()==destino.getLinha()){
             return false;
         }
         return true;
@@ -151,12 +151,22 @@ public abstract class Peca implements Cloneable{
      * @param tabuleiro
      */
     public void movimentar(Posicao destino, Tabuleiro tabuleiro){
+        System.out.println("Movendo peça de "+this.posicao+" para "+destino);
+        System.out.println(tabuleiro);
         Peca dest=tabuleiro.getTabuleiro()[destino.getLinha()][destino.getColuna()];
         if(dest!=null) dest.capturada=true;
         tabuleiro.getTabuleiro()[destino.getLinha()][destino.getColuna()]=this;
         tabuleiro.getTabuleiro()[this.posicao.getLinha()][this.posicao.getColuna()]=null;
-        if(this.posicao.equals(tabuleiro.getReiBrancoPosicao())) tabuleiro.setReiBrancoPosicao(destino);
-        if(this.posicao.equals(tabuleiro.getReiPretoPosicao())) tabuleiro.setReiPretoPosicao(destino);
+        
+        if(this.posicao.getLinha()==tabuleiro.getReiBrancoPosicao().getLinha()&&this.posicao.getColuna()==tabuleiro.getReiBrancoPosicao().getColuna()) {
+            System.out.println("Atualizando posição do rei branco");
+            tabuleiro.setReiBrancoPosicao(destino);
+        }
+        if(this.posicao.getLinha()==tabuleiro.getReiPretoPosicao().getLinha() &&this.posicao.getColuna()==tabuleiro.getReiPretoPosicao().getColuna()) {
+            System.out.println("Atualizando posição do rei preto");
+            tabuleiro.setReiPretoPosicao(destino);
+        }
+        
         this.posicao=destino;
     }
     
@@ -170,5 +180,17 @@ public abstract class Peca implements Cloneable{
 
     public String getSpritePath(){
         return spritePath;
+    }
+
+    public void setPosicao(Posicao p){
+        this.posicao=p;
+    }
+
+    public boolean isCapturada(){
+        return capturada;
+    }
+
+    public void setCapturada(boolean capturada){
+        this.capturada=capturada;
     }
 }

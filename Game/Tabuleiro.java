@@ -147,42 +147,41 @@ public class Tabuleiro implements Cloneable{
         for (int i = 0; i < LINHAS; i++) {
             for (int j = 0; j < COLUNAS; j++) {
                 Posicao destino = new Posicao(i, j);
-                if (peca.movimentoValido(destino, tabuleiro)) {
-                    movimentosValidos.add(destino);
+                Tabuleiro simulacao = tabuleiro.clone();
+                Peca pecaClonada = simulacao.getPeca(peca.getPosicao());
+                var posBase=new Posicao(peca.getPosicao().getLinha(),peca.getPosicao().getColuna());
+                if (pecaClonada.movimentoValido(destino, simulacao)) {
+                    System.out.println("Testando movimento");
+                    System.out.println(pecaClonada+" "+pecaClonada.getPosicao() + " " + destino);
+                    System.out.println(tabuleiro);
+                    System.out.println(simulacao);
+                    pecaClonada.movimentar(destino, simulacao);
+                    if (!simulacao.verificarSeReiEstaEmXeque(pecaClonada.getCor())) {
+                        System.out.println("Movimento válido");
+                        movimentosValidos.add(destino);
+                    }
+                    //Reverte movimento
+                    pecaClonada.setPosicao(posBase);
+                    if(peca.getClass()==Rei.class){
+                        System.out.println("Rei");
+                        if (pecaClonada.getCor()==Cor.BRANCO) simulacao.setReiBrancoPosicao(posBase);
+                        else simulacao.setReiPretoPosicao(posBase);
+                    }
+                    var pecaNaPosDestino = simulacao.getPeca(destino);
+                    if(pecaNaPosDestino!=null){
+                        simulacao.getTabuleiro()[destino.getLinha()][destino.getColuna()]=pecaNaPosDestino;
+                        if (pecaNaPosDestino.isCapturada()){
+                            pecaNaPosDestino.setCapturada(false);
+                        }
+                    }
                 }
             }
         }
+        System.out.println(movimentosValidos);
         return movimentosValidos;
     }
 
-    /**
-     * Método que promove um peão para uma peça de outro tipo
-     * @param peaoPos Posição do peão
-     * @param tipo Tipo da peça que o peão será promovido (RAINHA, TORRE, BISPO, CAVALO)
-     * @see PromocaoPeaoTipo
-     * @return void
-    */
-    public void promoverPeao(Posicao peaoPos,PromocaoPeaoTipo tipo){
-        Peca peao = tabuleiro[peaoPos.getLinha()][peaoPos.getColuna()];
-        Peca novaPeca = null;
-        switch (tipo){
-            case RAINHA:
-                novaPeca = new Rainha(peao.getCor(),peao.getPosicao());
-                break;
-            case TORRE:
-                novaPeca = new Torre(peao.getCor(),peao.getPosicao());
-                break;
-            case CAVALO:
-                novaPeca = new Cavalo(peao.getCor(),peao.getPosicao());
-                break;
-            case BISPO:
-                novaPeca = new Bispo(peao.getCor(),peao.getPosicao());
-                break;
-            default:
-                return;
-        }
-        tabuleiro[peao.getPosicao().getLinha()][peao.getPosicao().getColuna()] = novaPeca;
-    }
+ 
 
 
     /**
@@ -200,8 +199,9 @@ public class Tabuleiro implements Cloneable{
     public boolean verificarSeReiEstaEmXeque(Posicao posicaoRei,Cor corRei) {
         for (int i = 0; i < LINHAS; i++) {
             for (int j = 0; j < COLUNAS; j++) {
-                Peca pecaAdversaria = this.getPeca(new Posicao(i, j));
+                var pecaAdversaria = this.getPeca(new Posicao(i, j));
                 if (pecaAdversaria != null && pecaAdversaria.getCor() != corRei) {
+                    System.out.println("Testando movimento adversário "+pecaAdversaria+" "+pecaAdversaria.getPosicao()+" "+posicaoRei + " " +corRei);
                     if (pecaAdversaria.movimentoValido(posicaoRei, this)) {
                         return true;
                     }
