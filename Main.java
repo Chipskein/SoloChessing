@@ -20,7 +20,7 @@ import java.util.Timer;
 public class Main extends JPanel {
     private static final int TILE_SIZE = 100;
     private static final int BOARD_SIZE = 8;
-    private static final long TURN_DURATION_SECONDS = 20; // Default 120s
+    private static final long TURN_DURATION_SECONDS = 100; // Default 120s
     private static final Color HIGHLIGHT_COLOR = new Color(8, 200, 0, 128);
     private static final Color MOVE_COLOR = new Color(255, 200, 0, 128);
 
