@@ -12,7 +12,7 @@ import Game.Cor;
 public  class Bispo extends Peca {
     public Bispo(Cor cor, Posicao posicao) {
         super(cor, posicao);
-        this.spritePath = cor==Cor.BRANCO ? "/Resources/sprites/W_BISHOP.png": "/Resources/sprites/B_BISHOP.png";
+        this.spritePath = cor==Cor.BRANCO ? "/sprites/W_BISHOP.png": "/sprites/B_BISHOP.png";
     }
     /**
      * Verifica se um movimento é válido para o bispo

@@ -149,7 +149,7 @@ public class Main extends JPanel {
  
     private void loadAudio(){
         try{
-            InputStream audioSrc = getClass().getResourceAsStream("/Resources/audios/boardFX.wav");
+            InputStream audioSrc = getClass().getResourceAsStream("/audios/boardFX.wav");
             InputStream bufferedIn = new BufferedInputStream(audioSrc);
             AudioInputStream audioStream = AudioSystem.getAudioInputStream(bufferedIn);
             quadroFX = AudioSystem.getClip();

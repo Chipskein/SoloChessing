@@ -11,7 +11,7 @@ import Game.Cor;
 public  class Peao extends Peca {
     public Peao(Cor cor, Posicao posicao) {
         super(cor, posicao);
-        this.spritePath = cor==Cor.BRANCO ? "/Resources/sprites/W_PAWN.png": "/Resources/sprites/B_PAWN.png";
+        this.spritePath = cor==Cor.BRANCO ? "/sprites/W_PAWN.png": "/sprites/B_PAWN.png";
     }
     /**
      * Verifica se um movimento é válido para o peão
