@@ -1,6 +1,7 @@
 # Solo Chessing
+### Run
+    ./jar.sh && java -jar Game.jar
 
-### DeadLine 06/12/2024
 ### BUGS
 * [X] Peão na primeira primeira jogada consegue pular peças
 * [X] Não é possivel renderizar o caminho verde possivel das peças em algumas partes do tabuleiro(Resolvido com g.SetXorMode)
